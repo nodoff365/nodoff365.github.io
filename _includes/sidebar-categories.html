@@ -1,7 +1,8 @@
 <nav class="nav flex-column w-100 sidebar-categories">
+  {% assign current_url = page.url %} #수정한곳
   {% assign categories = site.categories | sort %}
   {% assign parents = "" | split: "" %}
-
+  
   {%- comment -%}대분류 = 모든 글의 categories[0] 기준{%- endcomment -%}
   {% for c in categories %}
     {% assign posts = c[1] %}
@@ -62,7 +63,9 @@
             {% endfor %}
 
             <li>
-              <a href="/categories/{{ child_slug }}/">
+              #<a href="/categories/{{ child_slug }}/">
+              <a href="/categories/{{ child_slug }}/"
+              class="{% if current_url == '/categories/' | append: child_slug | append: '/' %}is-active{% endif %}">
                 {{ child }} <span class="text-muted">({{ child_count }})</span>
               </a>
             </li>
