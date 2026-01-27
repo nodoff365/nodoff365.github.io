@@ -1,5 +1,5 @@
 <nav class="nav flex-column w-100 sidebar-categories">
-  {% assign current_url = page.url %} #수정한곳
+  {% assign current_url = page.url %}
   {% assign categories = site.categories | sort %}
   {% assign parents = "" | split: "" %}
   
@@ -63,7 +63,6 @@
             {% endfor %}
 
             <li>
-              #<a href="/categories/{{ child_slug }}/">
               <a href="/categories/{{ child_slug }}/"
               class="{% if current_url == '/categories/' | append: child_slug | append: '/' %}is-active{% endif %}">
                 {{ child }} <span class="text-muted">({{ child_count }})</span>
