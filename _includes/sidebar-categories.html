@@ -1,0 +1,74 @@
+<nav class="nav flex-column w-100 sidebar-categories">
+  {% assign categories = site.categories | sort %}
+  {% assign parents = "" | split: "" %}
+
+  {%- comment -%}대분류 = 모든 글의 categories[0] 기준{%- endcomment -%}
+  {% for c in categories %}
+    {% assign posts = c[1] %}
+    {% for post in posts %}
+      {% if post.categories.size > 0 %}
+        {% assign p = post.categories[0] %}
+        {% unless parents contains p %}
+          {% assign parents = parents | push: p %}
+        {% endunless %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+
+  {% assign parents = parents | sort %}
+
+  {% for parent in parents %}
+    {% assign posts = site.categories[parent] %}
+    {% assign children = "" | split: "" %}
+
+    {% for post in site.posts %}
+      {% if post.categories.size > 1 and post.categories[0] == parent %}
+        {% assign child = post.categories[1] %}
+        {% unless children contains child %}
+          {% assign children = children | push: child %}
+        {% endunless %}
+      {% endif %}
+    {% endfor %}
+
+    {% assign children = children | sort %}
+    {% capture parent_slug %}{{ parent | slugify }}{% endcapture %}
+
+    <div class="category-group">
+      <div class="category-parent">
+        <a href="/categories/{{ parent_slug }}/">
+          {{ parent }}
+          <span class="text-muted">(
+            {% assign parent_count = 0 %}
+            {% for post in site.posts %}
+              {% if post.categories.size > 0 and post.categories[0] == parent %}
+                {% assign parent_count = parent_count | plus: 1 %}
+              {% endif %}
+            {% endfor %}
+            {{ parent_count }}
+          )</span>
+        </a>
+      </div>
+
+      {% if children.size > 0 %}
+        <ul class="category-children">
+          {% for child in children %}
+            {% capture child_slug %}{{ child | slugify }}{% endcapture %}
+
+            {% assign child_count = 0 %}
+            {% for post in site.posts %}
+              {% if post.categories.size > 1 and post.categories[0] == parent and post.categories[1] == child %}
+                {% assign child_count = child_count | plus: 1 %}
+              {% endif %}
+            {% endfor %}
+
+            <li>
+              <a href="/categories/{{ child_slug }}/">
+                {{ child }} <span class="text-muted">({{ child_count }})</span>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  {% endfor %}
+</nav>
