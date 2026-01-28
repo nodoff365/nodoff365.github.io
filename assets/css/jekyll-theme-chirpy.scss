@@ -8,14 +8,14 @@
 
 /* append your custom style below */
 
-/* TOC 항상 펼치기 (Chirpy 안전 방식) */
-#toc .is-collapsed > ul {
-  display: block !important;
-}
-
-/* TOC 클릭 시 스크롤 튐 방지 */
+/* (선택) 스크롤 튐 미세 방지 */
 #toc {
   overflow-anchor: none;
+}
+
+/* TOC를 처음부터 다 펼쳐진 것처럼 */
+#toc li {
+  max-height: none !important;
 }
 
 /* 헤딩 앵커 위치 보정 */
