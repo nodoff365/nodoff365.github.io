@@ -13,11 +13,6 @@
   overflow-anchor: none;
 }
 
-/* TOC를 처음부터 다 펼쳐진 것처럼 */
-#toc li {
-  max-height: none !important;
-}
-
 /* 헤딩 앵커 위치 보정 */
 h1, h2, h3, h4, h5, h6 {
   scroll-margin-top: 5rem;
