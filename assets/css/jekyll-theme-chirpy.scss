@@ -1,6 +1,5 @@
 ---
 ---
-
 @use 'main
 {%- if jekyll.environment == 'production' -%}
   .bundle
@@ -9,6 +8,17 @@
 
 /* append your custom style below */
 
-.is-collapsed {
-  max-height: none !important;
+/* TOC 항상 펼치기 (Chirpy 안전 방식) */
+#toc .is-collapsed > ul {
+  display: block !important;
+}
+
+/* TOC 클릭 시 스크롤 튐 방지 */
+#toc {
+  overflow-anchor: none;
+}
+
+/* 헤딩 앵커 위치 보정 */
+h1, h2, h3, h4, h5, h6 {
+  scroll-margin-top: 5rem;
 }
