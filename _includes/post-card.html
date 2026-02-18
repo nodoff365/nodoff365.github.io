@@ -1,0 +1,15 @@
+<article class="post-card" data-post-url="{{ include.post.url }}" data-post-slug="{{ include.post.slug }}" data-major="{{ include.post.categories[0] | default: '' | escape }}" data-minor="{{ include.post.categories[1] | default: '' | escape }}" data-tags="{% for tag in include.post.tags %}{{ tag | escape }}{% unless forloop.last %}|{% endunless %}{% endfor %}" data-likes="0" data-views="0">
+  <a href="{{ include.post.url | relative_url }}" class="card-link">
+    <h3>{{ include.post.title }}</h3>
+    <p>{{ include.post.excerpt | strip_html | truncate: 110 }}</p>
+  </a>
+  <p class="card-meta">
+    <span>{{ include.post.date | date: "%Y-%m-%d" }}</span>
+    <span>&middot;</span>
+    <span>{{ include.post.categories[0] }} / {{ include.post.categories[1] }}</span>
+    <span>&middot;</span>
+    <span data-like-count data-post-url="{{ include.post.url }}" data-post-slug="{{ include.post.slug }}">Likes 0</span>
+    <span>&middot;</span>
+    <span data-view-count data-post-url="{{ include.post.url }}">Views 0</span>
+  </p>
+</article>

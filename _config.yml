@@ -1,0 +1,49 @@
+title: Notes by nodoff
+description: "zZ"
+baseurl: ""
+url: "https://nodoff365.github.io"
+markdown: kramdown
+timezone: Asia/Seoul
+paginate: 5
+paginate_path: "/page:num/"
+permalink: /:categories/:title/
+
+kramdown:
+  input: GFM
+highlighter: rouge
+
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-paginate
+
+author:
+  name: nodoff365
+
+github_username: nodoff365
+repository: nodoff365/nodoff365.github.io
+theme_color: "#111111"
+
+goatcounter:
+  script: "https://nodoff365.goatcounter.com/count"
+  api: "https://nodoff365.goatcounter.com/counter/"
+
+giscus:
+  repo: "nodoff365/nodoff365.github.io"
+  repo_id: ""
+  category: "Announcements"
+  category_id: ""
+  mapping: "pathname"
+  strict: "0"
+  reactions_enabled: "1"
+  emit_metadata: "0"
+  input_position: "top"
+  lang: "ko"
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      author: nodoff365

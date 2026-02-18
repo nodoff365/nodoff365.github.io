@@ -1,0 +1,35 @@
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="{{ '/' | relative_url }}">Home</a>
+  <span>&gt;</span>
+  <a href="{{ '/posts/' | relative_url }}">Posts</a>
+  {% if page.categories and page.categories[0] %}
+    {% assign major_encoded = page.categories[0] | url_encode %}
+    <span>&gt;</span>
+    <a href="{{ '/posts/?major=' | append: major_encoded | relative_url }}">{{ page.categories[0] }}</a>
+  {% endif %}
+  {% if page.categories and page.categories[1] %}
+    {% assign minor_encoded = page.categories[1] | url_encode %}
+    <span>&gt;</span>
+    <a href="{{ '/posts/?minor=' | append: minor_encoded | relative_url }}">{{ page.categories[1] }}</a>
+  {% endif %}
+  <span>&gt;</span>
+  <span class="current">{{ page.title }}</span>
+</nav>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://nodoff365.github.io/" },
+    { "@type": "ListItem", "position": 2, "name": "Posts", "item": "https://nodoff365.github.io/posts/" }
+    {% if page.categories and page.categories[0] %}
+    ,{ "@type": "ListItem", "position": 3, "name": {{ page.categories[0] | jsonify }}, "item": "https://nodoff365.github.io/posts/?major={{ page.categories[0] | url_encode }}" }
+    {% endif %}
+    {% if page.categories and page.categories[1] %}
+    ,{ "@type": "ListItem", "position": 4, "name": {{ page.categories[1] | jsonify }}, "item": "https://nodoff365.github.io/posts/?minor={{ page.categories[1] | url_encode }}" }
+    {% endif %}
+    ,{ "@type": "ListItem", "position": 5, "name": {{ page.title | jsonify }} }
+  ]
+}
+</script>

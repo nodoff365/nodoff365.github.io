@@ -1,0 +1,36 @@
+---
+layout: default
+---
+
+<section class="home-section" id="recent-posts">
+  <div class="section-head">
+    <h1>Recent Posts</h1>
+  </div>
+  <div class="card-grid">
+    {% for post in paginator.posts %}
+      {% include post-card.html post=post %}
+    {% endfor %}
+  </div>
+</section>
+
+<section class="home-section" id="popular-posts">
+  <div class="section-head">
+    <h2>Popular Posts</h2>
+  </div>
+  <div class="card-grid sortable-grid" data-sort-type="likes" data-display-limit="5">
+    {% for post in site.posts limit: 20 %}
+      {% include post-card.html post=post %}
+    {% endfor %}
+  </div>
+</section>
+
+<section class="home-section" id="viewed-posts">
+  <div class="section-head">
+    <h2>Most Viewed</h2>
+  </div>
+  <div class="card-grid sortable-grid" data-sort-type="views" data-display-limit="5">
+    {% for post in site.posts limit: 20 %}
+      {% include post-card.html post=post %}
+    {% endfor %}
+  </div>
+</section>

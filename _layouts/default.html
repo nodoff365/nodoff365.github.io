@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+  <head>
+    {% include head.html %}
+  </head>
+  <body>
+    {% include topbar.html %}
+    <div class="app-layout">
+      {% include sidebar.html %}
+      <main id="main-content" class="main-content">
+        {{ content }}
+      </main>
+    </div>
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+    <script>
+      window.__SITE_CONFIG__ = {
+        siteUrl: {{ site.url | jsonify }},
+        githubRepo: {{ site.repository | jsonify }},
+        goatApi: {{ site.goatcounter.api | jsonify }}
+      };
+      window.__POST_SEARCH__ = [
+        {% for post in site.posts %}
+          {
+            title: {{ post.title | jsonify }},
+            url: {{ post.url | relative_url | jsonify }},
+            excerpt: {{ post.excerpt | strip_html | normalize_whitespace | jsonify }},
+            content: {{ post.content | strip_html | normalize_whitespace | truncate: 500 | jsonify }},
+            categories: {{ post.categories | join: ' ' | jsonify }},
+            tags: {{ post.tags | join: ' ' | jsonify }},
+            date: {{ post.date | date: "%Y-%m-%d" | jsonify }}
+          }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ];
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
+    <script src="{{ '/assets/js/main.js' | relative_url }}"></script>
+    <script src="{{ '/assets/js/metrics.js' | relative_url }}"></script>
+  </body>
+</html>

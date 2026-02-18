@@ -1,0 +1,38 @@
+---
+layout: default
+title: Categories
+permalink: /categories/
+---
+
+<nav class="breadcrumb" aria-label="Breadcrumb" data-filter-breadcrumb>
+  <a href="{{ '/' | relative_url }}">Home</a>
+  <span>&gt;</span>
+  <span class="current">Categories</span>
+  <span id="breadcrumb-filter"></span>
+</nav>
+
+<section class="page-section">
+  <h1 id="posts-title">Categories</h1>
+  <p id="posts-filter-label" class="filter-label"></p>
+  <p id="posts-empty" class="filter-empty" hidden>No posts found in this category filter.</p>
+
+  <div class="tag-chip-list category-chip-list">
+    {% assign major_groups = site.posts | group_by_exp: "post", "post.categories[0]" | sort: "name" %}
+    {% for major in major_groups %}
+      {% if major.name and major.name != "" %}
+        <a class="tag-chip" href="{{ '/categories/' | relative_url }}?major={{ major.name | url_encode }}">
+          <span>{{ major.name }}</span>
+          <small>{{ major.items | size }}</small>
+        </a>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  <div id="posts-list" class="card-grid" data-base-title="Categories">
+    {% for post in site.posts %}
+      {% include post-card.html post=post %}
+    {% endfor %}
+  </div>
+
+  <nav id="posts-pagination" class="pagination" aria-label="Categories pagination"></nav>
+</section>

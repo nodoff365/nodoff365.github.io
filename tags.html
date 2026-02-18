@@ -1,0 +1,24 @@
+---
+layout: default
+title: Tags
+permalink: /tags/
+---
+
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="{{ '/' | relative_url }}">Home</a>
+  <span>&gt;</span>
+  <span class="current">Tags</span>
+</nav>
+
+<section class="page-section">
+  <h1>Tags</h1>
+  <div class="tag-chip-list">
+    {% assign tags = site.tags | sort %}
+    {% for tag in tags %}
+      <a class="tag-chip" href="{{ '/posts/' | relative_url }}?tag={{ tag[0] | url_encode }}">
+        <span>{{ tag[0] }}</span>
+        <small>{{ tag[1] | size }}</small>
+      </a>
+    {% endfor %}
+  </div>
+</section>

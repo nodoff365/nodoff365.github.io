@@ -1,0 +1,26 @@
+---
+layout: default
+title: Posts
+permalink: /posts/
+---
+
+<nav class="breadcrumb" aria-label="Breadcrumb" data-filter-breadcrumb>
+  <a href="{{ '/' | relative_url }}">Home</a>
+  <span>&gt;</span>
+  <span class="current">Posts</span>
+  <span id="breadcrumb-filter"></span>
+</nav>
+
+<section class="page-section">
+  <h1 id="posts-title" class="sr-only">Posts</h1>
+  <p id="posts-filter-label" class="filter-label"></p>
+  <p id="posts-empty" class="filter-empty" hidden>No posts found in this filter.</p>
+
+  <div id="posts-list" class="card-grid" data-base-title="Posts">
+    {% for post in site.posts %}
+      {% include post-card.html post=post %}
+    {% endfor %}
+  </div>
+
+  <nav id="posts-pagination" class="pagination" aria-label="Posts pagination"></nav>
+</section>
