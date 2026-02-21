@@ -3,8 +3,8 @@ name: Update Reactions Data
 on:
   workflow_dispatch:
   schedule:
-    - cron: "7 * * * *"
-
+    - cron: "0 * * * *"
+    
 permissions:
   contents: write
   discussions: read
