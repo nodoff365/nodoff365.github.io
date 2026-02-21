@@ -18,6 +18,15 @@
     return raw.toLowerCase();
   }
 
+  function parseCount(value) {
+    if (typeof value === "number") return Number.isFinite(value) ? value : 0;
+    const text = String(value || "").trim();
+    if (!text) return 0;
+    const numeric = text.replace(/[^\d.-]/g, "");
+    const n = Number(numeric);
+    return Number.isFinite(n) ? n : 0;
+  }
+
   function setReaction(el, count) {
     el.textContent = `Reactions ${count}`;
     const card = el.closest(".post-card");
@@ -113,7 +122,9 @@
       const norm = normalizePath(url);
       const withSlash = norm === "/" ? "/" : `${norm}/`;
       const raw = String(url || "").trim();
-      const out = [norm, withSlash, raw];
+      const rawNoTrail = raw && raw.length > 1 ? raw.replace(/\/+$/, "") : raw;
+      const rawWithSlash = rawNoTrail && rawNoTrail !== "/" ? `${rawNoTrail}/` : rawNoTrail;
+      const out = [norm, withSlash, raw, rawNoTrail, rawWithSlash];
       return Array.from(new Set(out.filter(Boolean)));
     }
 
@@ -126,7 +137,7 @@
           const res = await fetch(endpoint);
           if (!res.ok) continue;
           const data = await res.json();
-          const n = Number(data.count || 0);
+          const n = parseCount(data.count);
           if (Number.isFinite(n) && n > best) {
             best = n;
           }
