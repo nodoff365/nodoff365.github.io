@@ -1,58 +1,112 @@
-﻿(() => {
+(() => {
   const cfg = window.__SITE_CONFIG__ || {};
-  const repo = cfg.githubRepo;
   const goatApi = cfg.goatApi;
 
-  const likeEls = Array.from(document.querySelectorAll("[data-like-count]"));
+  const reactionEls = Array.from(document.querySelectorAll("[data-reaction-count]"));
   const viewEls = Array.from(document.querySelectorAll("[data-view-count]"));
 
-  function normalize(value) {
-    return (value || "").toString().trim().toLowerCase().replace(/\/$/, "");
+  function normalizePath(value) {
+    let raw = (value || "").toString().trim();
+    try {
+      raw = new URL(raw, window.location.origin).pathname;
+    } catch (_) {}
+    try {
+      raw = decodeURIComponent(raw);
+    } catch (_) {}
+    if (!raw.startsWith("/")) raw = `/${raw}`;
+    if (raw.length > 1) raw = raw.replace(/\/+$/, "");
+    return raw.toLowerCase();
   }
 
-  function setLike(el, count) {
-    el.textContent = `??${count}`;
+  function setReaction(el, count) {
+    el.textContent = `Reactions ${count}`;
     const card = el.closest(".post-card");
-    if (card) card.dataset.likes = String(count);
+    if (card) card.dataset.reactions = String(count);
   }
 
   function setView(el, count) {
-    el.textContent = `?몓 ${count}`;
+    el.textContent = `Views ${count}`;
     const card = el.closest(".post-card");
     if (card) card.dataset.views = String(count);
   }
 
-  async function fetchLikes() {
-    if (!repo || likeEls.length === 0) return;
+  async function fetchReactionMap() {
+    if (reactionEls.length === 0) return new Map();
     try {
-      const res = await fetch(`https://api.github.com/repos/${repo}/issues?state=all&per_page=100`);
-      if (!res.ok) return;
-      const issues = await res.json();
+      const res = await fetch("/assets/data/reactions.json", { cache: "no-store" });
+      if (!res.ok) return new Map();
+      const data = await res.json();
+      const source = data && typeof data === "object" && data.reactions
+        ? data.reactions
+        : data;
+
       const map = new Map();
+      Object.entries(source || {}).forEach(([key, value]) => {
+        map.set(normalizePath(key), Number(value || 0));
+      });
+      return map;
+    } catch (_) {
+      return new Map();
+    }
+  }
 
-      issues.forEach((issue) => {
-        if (issue.pull_request) return;
-        const key = normalize(issue.title);
-        const reactions = issue.reactions || {};
-        const score = (reactions["+1"] || 0) + (reactions.heart || 0);
-        map.set(key, score);
+  function applyReactions(map) {
+    reactionEls.forEach((el) => {
+      const url = el.dataset.postUrl || window.location.pathname;
+      const key = normalizePath(url);
+      setReaction(el, map.get(key) || 0);
+    });
+  }
+
+  function extractTotalReactions(payload) {
+    if (!payload || typeof payload !== "object") return null;
+    const giscus = payload.giscus;
+    if (!giscus || typeof giscus !== "object") return null;
+
+    const discussion = giscus.discussion || {};
+    const directCandidates = [
+      discussion?.reactions?.totalCount,
+      discussion?.reactionCount,
+      discussion?.totalReactions,
+      giscus?.reactions?.totalCount,
+      giscus?.reactionCount,
+      giscus?.totalReactions
+    ];
+    for (const n of directCandidates) {
+      if (Number.isFinite(Number(n))) return Number(n);
+    }
+
+    const groupCandidates = [discussion?.reactionGroups, giscus?.reactionGroups];
+    for (const groups of groupCandidates) {
+      if (Array.isArray(groups)) {
+        return groups.reduce((sum, group) => sum + Number(group?.totalCount || 0), 0);
+      }
+    }
+
+    return null;
+  }
+
+  function bindGiscusReactionSync() {
+    if (reactionEls.length === 0) return;
+
+    window.addEventListener("message", (event) => {
+      if (event.origin !== "https://giscus.app") return;
+      const total = extractTotalReactions(event.data);
+      if (total === null) return;
+
+      const currentPath = normalizePath(window.location.pathname);
+      reactionEls.forEach((el) => {
+        const elPath = normalizePath(el.dataset.postUrl || window.location.pathname);
+        if (elPath === currentPath) setReaction(el, total);
       });
 
-      likeEls.forEach((el) => {
-        const byUrl = normalize(el.dataset.postUrl);
-        const bySlug = normalize(el.dataset.postSlug);
-        const count = map.get(byUrl) ?? map.get(bySlug) ?? 0;
-        setLike(el, count);
-      });
-    } catch (_) {}
+      sortAllGrids();
+    });
   }
 
   async function fetchViews() {
     if (!goatApi || viewEls.length === 0) return;
-    const uniqueUrls = Array.from(
-      new Set(viewEls.map((el) => el.dataset.postUrl).filter(Boolean))
-    );
-
+    const uniqueUrls = Array.from(new Set(viewEls.map((el) => el.dataset.postUrl).filter(Boolean)));
     const counts = new Map();
 
     await Promise.all(
@@ -82,6 +136,7 @@
     const cards = Array.from(grid.querySelectorAll(".post-card"));
     cards.sort((a, b) => Number(b.dataset[key] || 0) - Number(a.dataset[key] || 0));
     cards.forEach((card) => grid.appendChild(card));
+
     const limit = Number(grid.dataset.displayLimit || "0");
     if (limit > 0) {
       cards.forEach((card, idx) => {
@@ -93,15 +148,16 @@
   function sortAllGrids() {
     document.querySelectorAll(".sortable-grid").forEach((grid) => {
       const type = grid.dataset.sortType;
-      if (type === "likes") sortGrid(grid, "likes");
+      if (type === "reactions") sortGrid(grid, "reactions");
       if (type === "views") sortGrid(grid, "views");
     });
   }
 
   (async () => {
-    await fetchLikes();
+    const reactionMap = await fetchReactionMap();
+    applyReactions(reactionMap);
+    bindGiscusReactionSync();
     await fetchViews();
     sortAllGrids();
   })();
 })();
-

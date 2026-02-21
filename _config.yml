@@ -30,15 +30,17 @@ goatcounter:
 
 giscus:
   repo: "nodoff365/nodoff365.github.io"
-  repo_id: ""
-  category: "Announcements"
-  category_id: ""
+  repo_id: "R_kgDORQ5KlQ"
+  category: "Comments"
+  category_id: "DIC_kwDORQ5Klc4C24F_"
   mapping: "pathname"
   strict: "0"
   reactions_enabled: "1"
-  emit_metadata: "0"
+  emit_metadata: "1"
   input_position: "top"
-  lang: "ko"
+  lang: "en"
+  theme_light: "light"
+  theme_dark: "transparent_dark"
 
 defaults:
   - scope:

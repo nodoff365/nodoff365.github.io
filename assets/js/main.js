@@ -8,10 +8,34 @@
   function updateGiscusTheme(theme) {
     const frame = document.querySelector("iframe.giscus-frame");
     if (!frame) return;
+    const cfg = window.__SITE_CONFIG__ || {};
     frame.contentWindow.postMessage(
-      { giscus: { setConfig: { theme: theme === "dark" ? "dark" : "light" } } },
+      {
+        giscus: {
+          setConfig: {
+            theme: theme === "dark"
+              ? (cfg.giscusThemeDark || "noborder_dark")
+              : (cfg.giscusThemeLight || "light")
+          }
+        }
+      },
       "https://giscus.app"
     );
+  }
+
+  function syncGiscusThemeWhenReady() {
+    let tries = 0;
+    const maxTries = 60;
+    const timer = setInterval(() => {
+      tries += 1;
+      const frame = document.querySelector("iframe.giscus-frame");
+      if (frame) {
+        clearInterval(timer);
+        updateGiscusTheme(root.getAttribute("data-theme") || "light");
+      } else if (tries >= maxTries) {
+        clearInterval(timer);
+      }
+    }, 200);
   }
 
   function setTheme(theme) {
@@ -28,6 +52,7 @@
   } else {
     setTheme("light");
   }
+  syncGiscusThemeWhenReady();
 
   themeBtn?.addEventListener("click", () => {
     const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
@@ -190,8 +215,14 @@
     }
   }
 
+  const searchForm = document.getElementById("search-form");
   const searchInput = document.getElementById("search-input");
+  const searchClear = document.getElementById("search-clear");
   const searchResults = document.getElementById("search-results");
+  const searchPageResults = document.getElementById("search-page-results");
+  const searchPagePagination = document.getElementById("search-page-pagination");
+  const searchPageCount = document.getElementById("search-page-count");
+  const searchPageEmpty = document.getElementById("search-page-empty");
   const posts = window.__POST_SEARCH__ || [];
   const fuse = (typeof Fuse !== "undefined" && posts.length > 0)
     ? new Fuse(posts, {
@@ -246,25 +277,131 @@
     searchResults.classList.add("open");
   }
 
+  function searchPosts(q) {
+    if (!q) return [];
+    if (fuse) return fuse.search(q).map((entry) => entry.item);
+
+    const lower = q.toLowerCase();
+    return posts.filter((p) => {
+      const tags = Array.isArray(p.tags) ? p.tags.join(" ") : (p.tags || "");
+      const categories = Array.isArray(p.categories) ? p.categories.join(" ") : (p.categories || "");
+      const joined = `${p.title} ${p.excerpt} ${p.content} ${tags} ${categories}`.toLowerCase();
+      return joined.includes(lower);
+    });
+  }
+
+  function renderSearchPage(q) {
+    if (!searchPageResults || !searchPageCount || !searchPageEmpty || !searchPagePagination) return;
+    searchPageResults.innerHTML = "";
+    searchPagePagination.innerHTML = "";
+
+    if (!q) {
+      searchPageCount.textContent = "0 posts total";
+      searchPageEmpty.hidden = true;
+      return;
+    }
+
+    const result = searchPosts(q);
+    const pageSize = 5;
+    const total = result.length;
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    let currentPage = Number(params.get("page") || "1");
+    if (Number.isNaN(currentPage) || currentPage < 1) currentPage = 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+    const start = (currentPage - 1) * pageSize;
+    const paged = result.slice(start, start + pageSize);
+
+    searchPageCount.textContent = `${total} posts total`;
+    searchPageEmpty.hidden = total > 0;
+
+    searchPageResults.innerHTML = paged.map((post) => {
+      const safeTitle = escapeHtml(post.title || "");
+      const safeExcerpt = escapeHtml((post.excerpt || "").slice(0, 140));
+      const safeDate = escapeHtml(post.date || "");
+      const safeUrl = escapeHtml(post.url || "");
+      const safeSlug = escapeHtml(post.slug || "");
+      const categories = Array.isArray(post.categories) ? post.categories : [];
+      const major = escapeHtml(categories[0] || "");
+      const minor = escapeHtml(categories[1] || "");
+      const categoryText = minor ? `${major} / ${minor}` : major;
+      return `
+        <article class="post-card" data-post-url="${safeUrl}" data-post-slug="${safeSlug}" data-major="${major}" data-minor="${minor}" data-reactions="0" data-views="0">
+          <a href="${safeUrl}" class="card-link">
+            <h3>${safeTitle}</h3>
+            <p>${safeExcerpt}</p>
+          </a>
+          <p class="card-meta">
+            <span>${safeDate}</span>
+            <span>&middot;</span>
+            <span>${categoryText}</span>
+            <span>&middot;</span>
+            <span data-reaction-count data-post-url="${safeUrl}" data-post-slug="${safeSlug}">Reactions 0</span>
+            <span>&middot;</span>
+            <span data-view-count data-post-url="${safeUrl}">Views 0</span>
+          </p>
+        </article>
+      `;
+    }).join("");
+
+    if (total > 0 && totalPages > 1) {
+      const base = new URLSearchParams(window.location.search);
+      base.set("q", q);
+      base.delete("page");
+
+      function makeLink(label, page, isCurrent = false, disabled = false) {
+        const el = document.createElement(isCurrent || disabled ? "span" : "a");
+        el.textContent = label;
+        if (isCurrent) {
+          el.className = "current";
+        } else if (disabled) {
+          el.className = "disabled";
+        } else {
+          const p = new URLSearchParams(base.toString());
+          p.set("page", String(page));
+          el.href = `${window.location.pathname}?${p.toString()}`;
+        }
+        searchPagePagination.appendChild(el);
+      }
+
+      makeLink("Prev", currentPage - 1, false, currentPage === 1);
+      for (let i = 1; i <= totalPages; i += 1) {
+        makeLink(String(i), i, i === currentPage, false);
+      }
+      makeLink("Next", currentPage + 1, false, currentPage === totalPages);
+    }
+  }
+
+  function updateSearchClearVisibility() {
+    if (!searchClear || !searchInput) return;
+    searchClear.hidden = !searchInput.value.trim();
+  }
+
   searchInput?.addEventListener("input", (e) => {
     const q = e.target.value.trim();
+    updateSearchClearVisibility();
     if (!q) {
       renderSearch([]);
       return;
     }
+    renderSearch(searchPosts(q));
+  });
 
-    if (fuse) {
-      const result = fuse.search(q).map((entry) => entry.item);
-      renderSearch(result);
+  searchForm?.addEventListener("submit", (e) => {
+    const q = (searchInput?.value || "").trim();
+    if (!q) {
+      e.preventDefault();
+      renderSearch([]);
       return;
     }
+    if (searchResults) searchResults.classList.remove("open");
+  });
 
-    const lower = q.toLowerCase();
-    const fallback = posts.filter((p) => {
-      const joined = `${p.title} ${p.excerpt} ${p.content} ${p.tags} ${p.categories}`.toLowerCase();
-      return joined.includes(lower);
-    });
-    renderSearch(fallback);
+  searchClear?.addEventListener("click", () => {
+    if (!searchInput) return;
+    searchInput.value = "";
+    renderSearch([]);
+    updateSearchClearVisibility();
+    searchInput.focus();
   });
 
   document.addEventListener("click", (e) => {
@@ -273,6 +410,13 @@
       searchResults.classList.remove("open");
     }
   });
+
+  const searchQuery = params.get("q") || "";
+  if (searchInput && searchQuery) {
+    searchInput.value = searchQuery;
+  }
+  updateSearchClearVisibility();
+  renderSearchPage(searchQuery.trim());
 
   const postContent = document.querySelector(".post-content");
   const toc = document.getElementById("toc");

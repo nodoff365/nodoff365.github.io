@@ -1,19 +1,31 @@
 <section class="comments">
-  <h2>Comments</h2>
-  <script
-    src="https://giscus.app/client.js"
-    data-repo="{{ site.giscus.repo }}"
-    data-repo-id="{{ site.giscus.repo_id }}"
-    data-category="{{ site.giscus.category }}"
-    data-category-id="{{ site.giscus.category_id }}"
-    data-mapping="{{ site.giscus.mapping }}"
-    data-strict="{{ site.giscus.strict }}"
-    data-reactions-enabled="{{ site.giscus.reactions_enabled }}"
-    data-emit-metadata="{{ site.giscus.emit_metadata }}"
-    data-input-position="{{ site.giscus.input_position }}"
-    data-theme="light"
-    data-lang="{{ site.giscus.lang }}"
-    crossorigin="anonymous"
-    async>
+  <div id="giscus-thread"></div>
+  <script>
+    (function () {
+      var cfgThemeLight = "{{ site.giscus.theme_light | default: 'light' }}";
+      var cfgThemeDark = "{{ site.giscus.theme_dark | default: 'noborder_dark' }}";
+      var currentTheme = document.documentElement.getAttribute("data-theme") === "dark"
+        ? cfgThemeDark
+        : cfgThemeLight;
+
+      var script = document.createElement("script");
+      script.src = "https://giscus.app/client.js";
+      script.setAttribute("data-repo", "{{ site.giscus.repo }}");
+      script.setAttribute("data-repo-id", "{{ site.giscus.repo_id }}");
+      script.setAttribute("data-category", "{{ site.giscus.category }}");
+      script.setAttribute("data-category-id", "{{ site.giscus.category_id }}");
+      script.setAttribute("data-mapping", "{{ site.giscus.mapping }}");
+      script.setAttribute("data-strict", "{{ site.giscus.strict }}");
+      script.setAttribute("data-reactions-enabled", "{{ site.giscus.reactions_enabled }}");
+      script.setAttribute("data-emit-metadata", "{{ site.giscus.emit_metadata }}");
+      script.setAttribute("data-input-position", "{{ site.giscus.input_position }}");
+      script.setAttribute("data-theme", currentTheme);
+      script.setAttribute("data-lang", "{{ site.giscus.lang }}");
+      script.setAttribute("crossorigin", "anonymous");
+      script.async = true;
+
+      var target = document.getElementById("giscus-thread");
+      if (target) target.appendChild(script);
+    })();
   </script>
 </section>
