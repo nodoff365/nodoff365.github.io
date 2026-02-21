@@ -119,6 +119,7 @@
 
     async function fetchOneViewCount(url) {
       const candidates = viewPathCandidates(url);
+      let best = 0;
       for (const path of candidates) {
         try {
           const endpoint = `${goatApi}${encodeURIComponent(path)}.json`;
@@ -126,10 +127,12 @@
           if (!res.ok) continue;
           const data = await res.json();
           const n = Number(data.count || 0);
-          if (Number.isFinite(n)) return n;
+          if (Number.isFinite(n) && n > best) {
+            best = n;
+          }
         } catch (_) {}
       }
-      return 0;
+      return best;
     }
 
     await Promise.all(
