@@ -27,6 +27,12 @@
     return Number.isFinite(n) ? n : 0;
   }
 
+  function trimTrail(path) {
+    if (!path) return "/";
+    if (path === "/") return "/";
+    return path.replace(/\/+$/, "");
+  }
+
   function setReaction(el, count) {
     el.textContent = `Reactions ${count}`;
     const card = el.closest(".post-card");
@@ -119,13 +125,31 @@
     const counts = new Map();
 
     function viewPathCandidates(url) {
-      const norm = normalizePath(url);
-      const withSlash = norm === "/" ? "/" : `${norm}/`;
-      const raw = String(url || "").trim();
-      const rawNoTrail = raw && raw.length > 1 ? raw.replace(/\/+$/, "") : raw;
-      const rawWithSlash = rawNoTrail && rawNoTrail !== "/" ? `${rawNoTrail}/` : rawNoTrail;
-      const out = [norm, withSlash, raw, rawNoTrail, rawWithSlash];
-      return Array.from(new Set(out.filter(Boolean)));
+      const rawInput = String(url || "").trim();
+      let parsedPath = rawInput;
+      try {
+        parsedPath = new URL(rawInput, window.location.origin).pathname;
+      } catch (_) {}
+
+      let decodedPath = parsedPath;
+      try {
+        decodedPath = decodeURIComponent(parsedPath);
+      } catch (_) {}
+
+      const decodedNoTrail = trimTrail(decodedPath);
+      const decodedWithTrail = decodedNoTrail === "/" ? "/" : `${decodedNoTrail}/`;
+      const encodedNoTrail = encodeURI(decodedNoTrail);
+      const encodedWithTrail = encodeURI(decodedWithTrail);
+
+      const parts = [
+        encodeURIComponent(decodedNoTrail),
+        encodeURIComponent(decodedWithTrail),
+        encodeURIComponent(encodedNoTrail),
+        encodeURIComponent(encodedWithTrail),
+        encodedNoTrail,
+        encodedWithTrail
+      ];
+      return Array.from(new Set(parts.filter(Boolean)));
     }
 
     async function fetchOneViewCount(url) {
@@ -133,11 +157,16 @@
       let best = 0;
       for (const path of candidates) {
         try {
-          const endpoint = `${goatApi}${encodeURIComponent(path)}.json`;
+          const endpoint = `${goatApi}${path}.json`;
           const res = await fetch(endpoint);
           if (!res.ok) continue;
           const data = await res.json();
-          const n = parseCount(data.count);
+          const n = Math.max(
+            parseCount(data.count),
+            parseCount(data.count_unique),
+            parseCount(data.total),
+            parseCount(data.hits)
+          );
           if (Number.isFinite(n) && n > best) {
             best = n;
           }
