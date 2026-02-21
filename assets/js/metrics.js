@@ -109,20 +109,33 @@
     const uniqueUrls = Array.from(new Set(viewEls.map((el) => el.dataset.postUrl).filter(Boolean)));
     const counts = new Map();
 
+    function viewPathCandidates(url) {
+      const norm = normalizePath(url);
+      const withSlash = norm === "/" ? "/" : `${norm}/`;
+      const raw = String(url || "").trim();
+      const out = [norm, withSlash, raw];
+      return Array.from(new Set(out.filter(Boolean)));
+    }
+
+    async function fetchOneViewCount(url) {
+      const candidates = viewPathCandidates(url);
+      for (const path of candidates) {
+        try {
+          const endpoint = `${goatApi}${encodeURIComponent(path)}.json`;
+          const res = await fetch(endpoint);
+          if (!res.ok) continue;
+          const data = await res.json();
+          const n = Number(data.count || 0);
+          if (Number.isFinite(n)) return n;
+        } catch (_) {}
+      }
+      return 0;
+    }
+
     await Promise.all(
       uniqueUrls.map(async (url) => {
-        try {
-          const endpoint = `${goatApi}${encodeURIComponent(url)}.json`;
-          const res = await fetch(endpoint);
-          if (!res.ok) {
-            counts.set(url, 0);
-            return;
-          }
-          const data = await res.json();
-          counts.set(url, Number(data.count || 0));
-        } catch (_) {
-          counts.set(url, 0);
-        }
+        const n = await fetchOneViewCount(url);
+        counts.set(url, n);
       })
     );
 
