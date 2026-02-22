@@ -52,9 +52,11 @@ layout: default
       {% endif %}
     </footer>
 
-    {% assign nav_scope = site.posts | where_exp: "post", "post.categories[0] == page.categories[0] and post.categories[1] == page.categories[1]" %}
+    {% assign major_current = page.categories.first | default: "" %}
+    {% assign minor_current = page.categories.last | default: "" %}
+    {% assign nav_scope = site.posts | where_exp: "post", "post.categories.first == major_current and post.categories.last == minor_current" %}
     {% if nav_scope.size < 2 %}
-      {% assign nav_scope = site.posts | where_exp: "post", "post.categories[0] == page.categories[0]" %}
+      {% assign nav_scope = site.posts | where_exp: "post", "post.categories.first == major_current" %}
     {% endif %}
     {% if nav_scope.size < 2 %}
       {% assign nav_scope = site.posts %}
