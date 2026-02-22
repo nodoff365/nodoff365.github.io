@@ -54,31 +54,57 @@ layout: default
 
     {% assign major_current = page.categories.first | default: "" %}
     {% assign minor_current = page.categories.last | default: "" %}
-    {% assign nav_scope = site.posts | where_exp: "post", "post.categories.first == major_current and post.categories.last == minor_current" %}
-    {% if nav_scope.size < 2 %}
-      {% assign nav_scope = site.posts | where_exp: "post", "post.categories.first == major_current" %}
-    {% endif %}
-    {% if nav_scope.size < 2 %}
-      {% assign nav_scope = site.posts %}
-    {% endif %}
 
-    {% assign prev_index = -1 %}
-    {% assign next_index = nav_scope.size %}
-    {% for post in nav_scope %}
-      {% if post.url == page.url %}
-        {% assign prev_index = forloop.index0 | minus: 1 %}
-        {% assign next_index = forloop.index0 | plus: 1 %}
+    {% assign has_minor_scope = false %}
+    {% for post in site.posts %}
+      {% if post.categories.first == major_current and post.categories.last == minor_current %}
+        {% assign has_minor_scope = true %}
       {% endif %}
     {% endfor %}
 
+    {% assign nav_scope_type = "minor" %}
+    {% if has_minor_scope == false %}
+      {% assign has_major_scope = false %}
+      {% for post in site.posts %}
+        {% if post.categories.first == major_current %}
+          {% assign has_major_scope = true %}
+        {% endif %}
+      {% endfor %}
+      {% if has_major_scope %}
+        {% assign nav_scope_type = "major" %}
+      {% else %}
+        {% assign nav_scope_type = "all" %}
+      {% endif %}
+    {% endif %}
+
     {% assign prev_post = nil %}
     {% assign next_post = nil %}
-    {% if prev_index >= 0 %}
-      {% assign prev_post = nav_scope[prev_index] %}
-    {% endif %}
-    {% if next_index < nav_scope.size %}
-      {% assign next_post = nav_scope[next_index] %}
-    {% endif %}
+    {% assign found_current = false %}
+
+    {% for post in site.posts %}
+      {% assign in_scope = false %}
+      {% if nav_scope_type == "minor" %}
+        {% if post.categories.first == major_current and post.categories.last == minor_current %}
+          {% assign in_scope = true %}
+        {% endif %}
+      {% elsif nav_scope_type == "major" %}
+        {% if post.categories.first == major_current %}
+          {% assign in_scope = true %}
+        {% endif %}
+      {% else %}
+        {% assign in_scope = true %}
+      {% endif %}
+
+      {% if in_scope %}
+        {% if post.url == page.url %}
+          {% assign found_current = true %}
+        {% elsif found_current and next_post == nil %}
+          {% assign next_post = post %}
+        {% elsif found_current == false %}
+          {% assign prev_post = post %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
 
     <nav class="post-neighbors" aria-label="Post navigation">
       <div class="post-neighbor prev">
