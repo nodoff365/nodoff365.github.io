@@ -1,9 +1,9 @@
 {
   "/운영/댓글/comments-test": {
-    "positive": 2,
-    "negative": 1,
-    "score": 1,
-    "total": 4
+    "positive": 6,
+    "negative": 2,
+    "score": 4,
+    "total": 8
   },
   "/운영/댓글/test": {
     "positive": 1,
