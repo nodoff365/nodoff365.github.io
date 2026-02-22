@@ -52,6 +52,61 @@ layout: default
       {% endif %}
     </footer>
 
+    {% assign nav_scope = site.posts | where_exp: "post", "post.categories[0] == page.categories[0] and post.categories[1] == page.categories[1]" %}
+    {% if nav_scope.size < 2 %}
+      {% assign nav_scope = site.posts | where_exp: "post", "post.categories[0] == page.categories[0]" %}
+    {% endif %}
+    {% if nav_scope.size < 2 %}
+      {% assign nav_scope = site.posts %}
+    {% endif %}
+
+    {% assign prev_index = -1 %}
+    {% assign next_index = nav_scope.size %}
+    {% for post in nav_scope %}
+      {% if post.url == page.url %}
+        {% assign prev_index = forloop.index0 | minus: 1 %}
+        {% assign next_index = forloop.index0 | plus: 1 %}
+      {% endif %}
+    {% endfor %}
+
+    {% assign prev_post = nil %}
+    {% assign next_post = nil %}
+    {% if prev_index >= 0 %}
+      {% assign prev_post = nav_scope[prev_index] %}
+    {% endif %}
+    {% if next_index < nav_scope.size %}
+      {% assign next_post = nav_scope[next_index] %}
+    {% endif %}
+
+    <nav class="post-neighbors" aria-label="Post navigation">
+      <div class="post-neighbor prev">
+        {% if prev_post %}
+          <a href="{{ prev_post.url | relative_url }}" class="post-neighbor-link">
+            <small>Previous</small>
+            <strong class="post-neighbor-title">{{ prev_post.title }}</strong>
+          </a>
+        {% else %}
+          <div class="post-neighbor-link is-empty">
+            <small>Previous</small>
+            <strong class="post-neighbor-title">No previous post</strong>
+          </div>
+        {% endif %}
+      </div>
+      <div class="post-neighbor next">
+        {% if next_post %}
+          <a href="{{ next_post.url | relative_url }}" class="post-neighbor-link">
+            <small>Next</small>
+            <strong class="post-neighbor-title">{{ next_post.title }}</strong>
+          </a>
+        {% else %}
+          <div class="post-neighbor-link is-empty">
+            <small>Next</small>
+            <strong class="post-neighbor-title">No next post</strong>
+          </div>
+        {% endif %}
+      </div>
+    </nav>
+
     {% include comments.html %}
   </article>
 
