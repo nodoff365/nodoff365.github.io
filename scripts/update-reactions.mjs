@@ -26,7 +26,7 @@ function normalizePath(value) {
   return raw.toLowerCase();
 }
 
-const POSITIVE_SET = new Set(["THUMBS_UP", "HEART", "HOORAY", "ROCKET", "EYES"]);
+const POSITIVE_SET = new Set(["THUMBS_UP", "HEART", "HOORAY", "ROCKET", "EYES", "LAUGH"]);
 const NEGATIVE_SET = new Set(["THUMBS_DOWN", "CONFUSED"]);
 
 function summarizeReactions(groups) {

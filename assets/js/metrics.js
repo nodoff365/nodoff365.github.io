@@ -116,7 +116,7 @@
         const content = String(group?.content || "");
         const n = Number(group?.totalCount ?? group?.users?.totalCount ?? 0);
         if (!Number.isFinite(n) || n <= 0) return;
-        if (["THUMBS_UP", "HEART", "HOORAY", "ROCKET", "EYES"].includes(content)) positive += n;
+        if (["THUMBS_UP", "HEART", "HOORAY", "ROCKET", "EYES", "LAUGH"].includes(content)) positive += n;
         if (["THUMBS_DOWN", "CONFUSED"].includes(content)) negative += n;
       });
       return positive - negative;
