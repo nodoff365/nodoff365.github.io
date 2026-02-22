@@ -33,6 +33,21 @@
     return path.replace(/\/+$/, "");
   }
 
+  function pathCandidates(input) {
+    const base = trimTrail(normalizePath(input));
+    const withSlash = base === "/" ? "/" : `${base}/`;
+
+    const out = [base, withSlash];
+    if (base.endsWith(".html")) {
+      const noHtml = base.replace(/\.html$/i, "");
+      out.push(noHtml, noHtml === "/" ? "/" : `${noHtml}/`);
+    } else {
+      const html = `${base}.html`;
+      out.push(html, `${html}/`);
+    }
+    return Array.from(new Set(out));
+  }
+
   function setReaction(el, count) {
     el.textContent = `Reactions ${count}`;
     const card = el.closest(".post-card");
@@ -74,8 +89,15 @@
   function applyReactions(map) {
     reactionEls.forEach((el) => {
       const url = el.dataset.postUrl || window.location.pathname;
-      const key = normalizePath(url);
-      setReaction(el, map.get(key) || 0);
+      const keys = pathCandidates(url);
+      let count = 0;
+      for (const key of keys) {
+        if (map.has(key)) {
+          count = map.get(key) || 0;
+          break;
+        }
+      }
+      setReaction(el, count);
     });
   }
 
@@ -99,19 +121,6 @@
       });
       return positive - negative;
     }
-
-    const directCandidates = [
-      discussion?.reactions?.totalCount,
-      discussion?.reactionCount,
-      discussion?.totalReactions,
-      giscus?.reactions?.totalCount,
-      giscus?.reactionCount,
-      giscus?.totalReactions
-    ];
-    for (const n of directCandidates) {
-      if (Number.isFinite(Number(n))) return Number(n);
-    }
-
     return null;
   }
 

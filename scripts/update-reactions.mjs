@@ -71,6 +71,8 @@ const query = `
     repository(owner: $owner, name: $name) {
       discussions(first: 100, after: $after) {
         nodes {
+          number
+          updatedAt
           title
           category { name }
           reactionGroups {
@@ -100,7 +102,29 @@ while (true) {
     if ((d.category?.name || "") !== categoryName) return;
     const key = normalizePath(d.title);
     const summary = summarizeReactions(d.reactionGroups);
-    map.set(key, summary);
+    const prev = map.get(key);
+
+    if (!prev) {
+      map.set(key, {
+        updatedAt: d.updatedAt || "",
+        number: Number(d.number || 0),
+        summary
+      });
+      return;
+    }
+
+    const prevUpdated = String(prev.updatedAt || "");
+    const nextUpdated = String(d.updatedAt || "");
+    const prevNumber = Number(prev.number || 0);
+    const nextNumber = Number(d.number || 0);
+
+    if (nextUpdated > prevUpdated || (nextUpdated === prevUpdated && nextNumber > prevNumber)) {
+      map.set(key, {
+        updatedAt: nextUpdated,
+        number: nextNumber,
+        summary
+      });
+    }
   });
 
   if (!page?.pageInfo?.hasNextPage) break;
@@ -111,7 +135,7 @@ const out = {};
 Array.from(map.entries())
   .sort((a, b) => a[0].localeCompare(b[0]))
   .forEach(([k, v]) => {
-    out[k] = v;
+    out[k] = v.summary;
   });
 
 await writeFile("assets/data/reactions.json", `${JSON.stringify(out, null, 2)}\n`, "utf8");
