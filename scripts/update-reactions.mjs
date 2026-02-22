@@ -26,9 +26,24 @@ function normalizePath(value) {
   return raw.toLowerCase();
 }
 
-function totalReactions(groups) {
-  if (!Array.isArray(groups)) return 0;
-  return groups.reduce((sum, g) => sum + Number(g?.users?.totalCount || 0), 0);
+const POSITIVE_SET = new Set(["THUMBS_UP", "HEART", "HOORAY", "ROCKET", "EYES"]);
+const NEGATIVE_SET = new Set(["THUMBS_DOWN", "CONFUSED"]);
+
+function summarizeReactions(groups) {
+  const summary = { positive: 0, negative: 0, score: 0, total: 0 };
+  if (!Array.isArray(groups)) return summary;
+
+  groups.forEach((g) => {
+    const content = String(g?.content || "");
+    const n = Number(g?.users?.totalCount || 0);
+    if (!Number.isFinite(n) || n <= 0) return;
+    summary.total += n;
+    if (POSITIVE_SET.has(content)) summary.positive += n;
+    if (NEGATIVE_SET.has(content)) summary.negative += n;
+  });
+
+  summary.score = summary.positive - summary.negative;
+  return summary;
 }
 
 async function gql(query, variables) {
@@ -59,6 +74,7 @@ const query = `
           title
           category { name }
           reactionGroups {
+            content
             users { totalCount }
           }
         }
@@ -83,8 +99,8 @@ while (true) {
     if (!d || !d.title) return;
     if ((d.category?.name || "") !== categoryName) return;
     const key = normalizePath(d.title);
-    const count = totalReactions(d.reactionGroups);
-    map.set(key, count);
+    const summary = summarizeReactions(d.reactionGroups);
+    map.set(key, summary);
   });
 
   if (!page?.pageInfo?.hasNextPage) break;

@@ -57,7 +57,13 @@
 
       const map = new Map();
       Object.entries(source || {}).forEach(([key, value]) => {
-        map.set(normalizePath(key), Number(value || 0));
+        let score = 0;
+        if (typeof value === "number") {
+          score = Number(value || 0);
+        } else if (value && typeof value === "object") {
+          score = Number(value.score ?? 0);
+        }
+        map.set(normalizePath(key), Number.isFinite(score) ? score : 0);
       });
       return map;
     } catch (_) {
@@ -73,12 +79,27 @@
     });
   }
 
-  function extractTotalReactions(payload) {
+  function extractScoreReactions(payload) {
     if (!payload || typeof payload !== "object") return null;
     const giscus = payload.giscus;
     if (!giscus || typeof giscus !== "object") return null;
 
     const discussion = giscus.discussion || {};
+
+    const groups = discussion?.reactionGroups || giscus?.reactionGroups;
+    if (Array.isArray(groups)) {
+      let positive = 0;
+      let negative = 0;
+      groups.forEach((group) => {
+        const content = String(group?.content || "");
+        const n = Number(group?.totalCount ?? group?.users?.totalCount ?? 0);
+        if (!Number.isFinite(n) || n <= 0) return;
+        if (["THUMBS_UP", "HEART", "HOORAY", "ROCKET", "EYES"].includes(content)) positive += n;
+        if (["THUMBS_DOWN", "CONFUSED"].includes(content)) negative += n;
+      });
+      return positive - negative;
+    }
+
     const directCandidates = [
       discussion?.reactions?.totalCount,
       discussion?.reactionCount,
@@ -91,13 +112,6 @@
       if (Number.isFinite(Number(n))) return Number(n);
     }
 
-    const groupCandidates = [discussion?.reactionGroups, giscus?.reactionGroups];
-    for (const groups of groupCandidates) {
-      if (Array.isArray(groups)) {
-        return groups.reduce((sum, group) => sum + Number(group?.totalCount || 0), 0);
-      }
-    }
-
     return null;
   }
 
@@ -106,13 +120,13 @@
 
     window.addEventListener("message", (event) => {
       if (event.origin !== "https://giscus.app") return;
-      const total = extractTotalReactions(event.data);
-      if (total === null) return;
+      const score = extractScoreReactions(event.data);
+      if (score === null) return;
 
       const currentPath = normalizePath(window.location.pathname);
       reactionEls.forEach((el) => {
         const elPath = normalizePath(el.dataset.postUrl || window.location.pathname);
-        if (elPath === currentPath) setReaction(el, total);
+        if (elPath === currentPath) setReaction(el, score);
       });
 
       sortAllGrids();
