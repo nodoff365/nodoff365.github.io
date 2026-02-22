@@ -1,3 +1,14 @@
 {
-  "/운영/댓글/test": 2
+  "/운영/댓글/comments-test": {
+    "positive": 2,
+    "negative": 1,
+    "score": 1,
+    "total": 4
+  },
+  "/운영/댓글/test": {
+    "positive": 1,
+    "negative": 1,
+    "score": 0,
+    "total": 2
+  }
 }
