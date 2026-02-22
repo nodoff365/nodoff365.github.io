@@ -49,7 +49,7 @@
   }
 
   function setReaction(el, count) {
-    el.textContent = `Reactions ${count}`;
+    el.textContent = `Likes ${count}`;
     const card = el.closest(".post-card");
     if (card) card.dataset.reactions = String(count);
   }

@@ -335,7 +335,7 @@
             <span>&middot;</span>
             <span>${categoryText}</span>
             <span>&middot;</span>
-            <span data-reaction-count data-post-url="${safeUrl}" data-post-slug="${safeSlug}">Reactions 0</span>
+            <span data-reaction-count data-post-url="${safeUrl}" data-post-slug="${safeSlug}">Likes 0</span>
             <span>&middot;</span>
             <span data-view-count data-post-url="${safeUrl}">Views 0</span>
           </p>
