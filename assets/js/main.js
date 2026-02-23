@@ -421,6 +421,157 @@
   const postContent = document.querySelector(".post-content");
   const toc = document.getElementById("toc");
 
+  function annotateCodeBlocks() {
+    if (!postContent) return;
+
+    const blocks = Array.from(postContent.querySelectorAll("pre code"));
+    blocks.forEach((code) => {
+      const pre = code.closest("pre");
+      if (!pre) return;
+
+      const classPool = [
+        code.className || "",
+        pre.className || "",
+        pre.parentElement?.className || "",
+        pre.closest(".highlighter-rouge")?.className || ""
+      ].join(" ");
+
+      const match = classPool.match(/language-([a-z0-9_+-]+)/i);
+      if (!match) return;
+
+      const lang = (match[1] || "").toLowerCase();
+      if (!lang) return;
+      pre.setAttribute("data-code-lang", lang);
+    });
+  }
+
+  function enhanceMarkdownCallouts() {
+    if (!postContent) return;
+    const blocks = Array.from(postContent.querySelectorAll("blockquote"));
+    blocks.forEach((quote) => {
+      const first = quote.querySelector("p");
+      if (!first) return;
+      const raw = (first.textContent || "").trim();
+      const m = raw.match(/^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*(.*)$/i);
+      if (!m) return;
+
+      const kind = (m[1] || "").toLowerCase();
+      const rest = m[2] || "";
+      quote.classList.add("md-callout", `md-callout-${kind}`);
+      quote.setAttribute("data-callout", kind);
+      first.textContent = rest;
+    });
+  }
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (_) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "absolute";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      return ok;
+    }
+  }
+
+  function attachCodeCopyButtons() {
+    if (!postContent) return;
+    const blocks = Array.from(postContent.querySelectorAll("pre"));
+    blocks.forEach((pre) => {
+      if (pre.querySelector(".code-copy-btn")) return;
+      const code = pre.querySelector("code");
+      if (!code) return;
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "code-copy-btn";
+      btn.textContent = "Copy";
+      btn.setAttribute("aria-label", "Copy code");
+
+      btn.addEventListener("click", async () => {
+        const raw = code.innerText || code.textContent || "";
+        const ok = await copyText(raw);
+        if (!ok) return;
+        btn.classList.add("copied");
+        btn.textContent = "Copied";
+        window.setTimeout(() => {
+          btn.classList.remove("copied");
+          btn.textContent = "Copy";
+        }, 1400);
+      });
+
+      pre.appendChild(btn);
+    });
+  }
+
+  function initScrollJumpButton() {
+    if (document.getElementById("scroll-jump-btn")) return;
+
+    const btn = document.createElement("button");
+    btn.id = "scroll-jump-btn";
+    btn.className = "scroll-jump-btn";
+    btn.type = "button";
+    btn.setAttribute("aria-label", "Scroll to bottom");
+    btn.setAttribute("data-mode", "down");
+    btn.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 5v14m0 0-6-6m6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    `;
+    document.body.appendChild(btn);
+
+    function setMode(mode) {
+      btn.dataset.mode = mode;
+      if (mode === "up") {
+        btn.setAttribute("aria-label", "Scroll to top");
+        btn.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 19V5m0 0-6 6m6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        `;
+      } else {
+        btn.setAttribute("aria-label", "Scroll to bottom");
+        btn.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 5v14m0 0-6-6m6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        `;
+      }
+    }
+
+    function update() {
+      const doc = document.documentElement;
+      const max = Math.max(0, doc.scrollHeight - window.innerHeight);
+      if (max < 240) {
+        btn.hidden = true;
+        return;
+      }
+
+      btn.hidden = false;
+      const atTop = window.scrollY <= 120;
+      setMode(atTop ? "down" : "up");
+    }
+
+    btn.addEventListener("click", () => {
+      const mode = btn.dataset.mode || "down";
+      const targetTop = mode === "down"
+        ? Math.max(0, document.documentElement.scrollHeight - window.innerHeight)
+        : 0;
+      window.scrollTo({ top: targetTop, behavior: "smooth" });
+    });
+
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    update();
+  }
+
   function slugify(text) {
     return text
       .toLowerCase()
@@ -488,5 +639,9 @@
     }
   }
 
+  annotateCodeBlocks();
+  enhanceMarkdownCallouts();
+  attachCodeCopyButtons();
+  initScrollJumpButton();
   updateFilterBreadcrumb();
 })();
