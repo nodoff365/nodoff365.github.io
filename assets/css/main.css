@@ -690,7 +690,7 @@ html[data-theme="dark"] .theme-icon-sun {
   padding: 0;
   background: transparent;
   font-size: 0.92rem;
-  line-height: 1.2;
+  line-height: 1.25;
   font-family: "Consolas", "Cascadia Code", "Fira Code", "JetBrains Mono", "Noto Sans Mono CJK KR", "Malgun Gothic", monospace;
   position: relative;
   z-index: 1;
@@ -703,7 +703,7 @@ html[data-theme="dark"] .theme-icon-sun {
 .post-content pre code,
 .post-content .highlight code,
 .post-content .highlighter-rouge code {
-  line-height: 1.2 !important;
+  line-height: 1.25 !important;
 }
 
 /* Rouge token colors (IDE-like) */
