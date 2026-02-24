@@ -655,6 +655,7 @@ html[data-theme="dark"] .theme-icon-sun {
   border-radius: 6px;
   padding: 0.08rem 0.38rem;
   font-size: 0.9em;
+  font-family: "Consolas", "Cascadia Code", "Fira Code", "JetBrains Mono", "Noto Sans Mono CJK KR", "Malgun Gothic", monospace;
   background: var(--code-bg);
 }
 
