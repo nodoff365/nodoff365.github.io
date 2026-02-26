@@ -16,6 +16,7 @@ hbacrule 생성
 ```
 ### 1.1 hbacrule 생성
 - 형식
+
 ```bash
 ipa hbacrule-add [룰이름]
 
@@ -90,6 +91,7 @@ ipa hbacrule-show [룰이름]
 | nova_all          | nova      | SSH 허용  | SSH 허용 | SSH 허용 | SSH 허용 |
 | professor_bastion | professor | SSH 허용  | SSH 불가 | SSH 불가 | SSH 불가 |
 | student_deny_all  | students  | 접근 불가   | 접근 불가  | 접근 불가  | 접근 불가  |
+
 ```bash
 ipa hbacrule-add admins_all
 ipa hbacrule-add-user admins_all --groups=admins
@@ -178,6 +180,7 @@ ipa hbacrule-add-service mysql_ssh_only --hbacsvcs=sshd
 | was_ssh_only     | was.kcci.edu     | admins       | ssh |
 | mysql_ssh_only   | mysql.kcci.edu   | dba          | ssh |
 | bastion_ssh_only | bastion.kcci.edu | admins, nova | ssh |
+
 ```bash
 # web_ssh_only
 ipa hbacrule-add web_ssh_only
