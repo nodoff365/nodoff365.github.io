@@ -1,4 +1,11 @@
+---
+title: "FreeIPA HBAC 접근 통제 실습"
+date: 2026-02-25 21:30:00 +0900
+categories: [클라우드 기초, Linux]
+tags: [Linux, IDM, IPA]
+---
 ## 1. FreeIPA 기반 HBAC 접근통제 적용 흐름의 핵심 단계와 단계별 명령어 정리
+
 ```bash
 hbacrule 생성
   → hbacrule에 사용자/그룹 연결
