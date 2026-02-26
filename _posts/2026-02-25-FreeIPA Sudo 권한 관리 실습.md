@@ -1,3 +1,9 @@
+---
+title: "FreeIPA Sudo 권한 관리 실습"
+date: 2026-02-25 21:00:00 +0900
+categories: [클라우드 기초, Linux]
+tags: [Linux, IDM, IPA]
+---
 ## 1. FreeIPA 기반 sudo 권한 적용 흐름의 핵심 단계와 단계별 명령어 정리
 
 ```bash
