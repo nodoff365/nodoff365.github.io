@@ -10,18 +10,21 @@
   --toc-w: 220px;
   --radius-md: 12px;
   --nav-pill-bg: rgba(128, 128, 128, 0.2);
-  --code-bg: #f6f8fb;
-  --code-head-bg: #eef2f7;
-  --code-border: #d4dbe6;
-  --code-fg: #1f2937;
-  --tok-comment: #6b7280;
-  --tok-keyword: #b42318;
-  --tok-string: #155eef;
-  --tok-number: #0e9384;
-  --tok-func: #7a3ef9;
-  --tok-type: #026aa2;
-  --tok-operator: #475467;
-  --tok-error: #d92d20;
+  --code-bg: #121212;
+  --code-head-bg: #0e0e0e;
+  --code-border: #2e2e2e;
+  --code-fg: #e6edf3;
+  --code-icon: #9aa4b2;
+  --code-inline-bg: #121212;
+  --code-inline-fg: #e6edf3;
+  --tok-comment: #8b949e;
+  --tok-keyword: #ff7b72;
+  --tok-string: #a5d6ff;
+  --tok-number: #79c0ff;
+  --tok-func: #d2a8ff;
+  --tok-type: #7ee787;
+  --tok-operator: #ff7b72;
+  --tok-error: #f85149;
 }
 
 html[data-theme="dark"] {
@@ -32,10 +35,13 @@ html[data-theme="dark"] {
   --surface: #000000;
   --accent: #a0a0a0;
   --nav-pill-bg: rgba(170, 170, 170, 0.22);
-  --code-bg: #0d1117;
-  --code-head-bg: #161b22;
-  --code-border: #30363d;
+  --code-bg: #121212;
+  --code-head-bg: #0e0e0e;
+  --code-border: #2e2e2e;
   --code-fg: #e6edf3;
+  --code-icon: #9aa4b2;
+  --code-inline-bg: #121212;
+  --code-inline-fg: #e6edf3;
   --tok-comment: #8b949e;
   --tok-keyword: #ff7b72;
   --tok-string: #a5d6ff;
@@ -55,6 +61,26 @@ body {
   font-family: "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
   background: var(--bg);
   color: var(--text);
+}
+
+/* Scrollbar colors */
+* {
+  scrollbar-color: var(--line) var(--bg);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 8px;
+  border: 2px solid var(--bg);
 }
 
 a {
@@ -408,6 +434,9 @@ html[data-theme="dark"] .theme-icon-sun {
 
 .home-section {
   margin-bottom: 34px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
 }
 
 .section-head h1,
@@ -426,6 +455,8 @@ html[data-theme="dark"] .theme-icon-sun {
   border-radius: var(--radius-md);
   background: var(--surface);
   padding: 14px;
+  display: flex;
+  flex-direction: column;
 }
 
 .post-card h3 {
@@ -435,6 +466,36 @@ html[data-theme="dark"] .theme-icon-sun {
 .post-card p {
   margin: 0 0 10px;
   color: var(--muted);
+}
+
+.post-card {
+  min-height: 0;
+  height: auto;
+  padding: 10px 12px;
+}
+
+.post-card h3 {
+  margin: 0 0 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-grid {
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.post-card .card-link p {
+  display: none;
+}
+
+.post-card .card-meta {
+  margin-top: 0;
+  margin-bottom: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .card-meta {
@@ -581,19 +642,27 @@ html[data-theme="dark"] .theme-icon-sun {
 
 .post-content blockquote {
   margin: 0 0 1rem;
-  padding: 0.7rem 1rem;
+  padding: 0.25rem 0 0.25rem 0.9rem;
   border-left: 3px solid color-mix(in srgb, var(--accent) 60%, var(--line) 40%);
   color: var(--muted);
-  background: color-mix(in srgb, var(--surface) 90%, var(--text) 10%);
-  border-radius: 0 8px 8px 0;
+  background: transparent;
+  border-radius: 0;
+}
+
+.post-content blockquote p {
+  margin: 0;
+}
+
+.post-content blockquote p + p {
+  margin-top: 0.35rem;
 }
 
 .post-content blockquote.md-callout {
-  border-left-width: 4px;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--surface) 82%, var(--text) 18%);
+  border-left-width: 3px;
+  border-radius: 0;
+  background: transparent;
   color: var(--text);
-  padding: 0.8rem 0.95rem;
+  padding: 0.25rem 0 0.25rem 0.9rem;
 }
 
 .post-content blockquote.md-callout::before {
@@ -653,10 +722,14 @@ html[data-theme="dark"] .theme-icon-sun {
 .post-content :not(pre) > code {
   border: 1px solid var(--code-border);
   border-radius: 6px;
-  padding: 0.08rem 0.38rem;
+  padding: 0.18rem 0.42rem;
+  display: inline-flex;
+  align-items: center;
   font-size: 0.9em;
+  line-height: 1;
   font-family: "Consolas", "Cascadia Code", "Fira Code", "JetBrains Mono", "Noto Sans Mono CJK KR", "Malgun Gothic", monospace;
-  background: var(--code-bg);
+  background: var(--code-inline-bg);
+  color: var(--code-inline-fg);
 }
 
 .post-content pre {
@@ -664,12 +737,12 @@ html[data-theme="dark"] .theme-icon-sun {
   white-space: pre-wrap;
   word-break: break-word;
   margin: 0 0 1rem;
-  padding: 2.2rem 1rem 0.95rem;
+  padding: calc(34px + 0.95rem) 1rem 0.95rem;
   border: 1px solid var(--code-border);
   border-radius: 10px;
   background: var(--code-bg);
   position: relative;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  box-shadow: none;
 }
 
 .post-content pre::after {
@@ -790,48 +863,54 @@ html[data-theme="dark"] .theme-icon-sun {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--muted);
-  border: 1px solid var(--code-border);
-  border-radius: 999px;
+  border: 0;
+  border-radius: 0;
   height: 22px;
-  min-width: 52px;
+  min-width: 0;
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 0 0.5rem;
+  justify-content: flex-start;
+  padding: 0;
   line-height: 1;
   font-family: "Consolas", "Cascadia Code", "Fira Code", "JetBrains Mono", "Noto Sans Mono CJK KR", "Malgun Gothic", monospace;
-  background: var(--code-head-bg);
+  background: transparent;
   z-index: 2;
 }
 
 .post-content .code-copy-btn {
   position: absolute;
   top: 6px;
-  right: 8px;
+  right: 10px;
+  width: 22px;
   height: 22px;
-  min-width: 52px;
+  min-width: 22px;
   box-sizing: border-box;
-  border: 1px solid var(--code-border);
-  border-radius: 999px;
-  padding: 0 0.5rem;
-  background: var(--code-head-bg);
+  border: 0;
+  border-radius: 6px;
+  padding: 0;
+  background: transparent;
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: 0;
   line-height: 1;
   font-family: "Consolas", "Cascadia Code", "Fira Code", "JetBrains Mono", "Noto Sans Mono CJK KR", "Malgun Gothic", monospace;
   cursor: pointer;
   z-index: 3;
 }
 
+.post-content .code-copy-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
 .post-content .code-copy-btn:hover,
 .post-content .code-copy-btn:active {
-  background: var(--nav-pill-bg);
-  color: var(--accent);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--muted);
 }
 
 .post-content .code-copy-btn.copied {
-  color: var(--text);
+  color: var(--muted);
 }
 
 .post-content table {
@@ -1024,7 +1103,8 @@ html[data-theme="dark"] .theme-icon-sun {
   top: calc(var(--topbar-h) + 18px);
   margin-left: 50px;
   max-height: calc(100vh - var(--topbar-h) - 30px);
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   border: 0 !important;
   border-radius: 0 !important;
   background: transparent !important;
@@ -1063,6 +1143,8 @@ html[data-theme="dark"] .theme-icon-sun {
   padding: 6px 0;
   color: var(--muted);
   font-size: 0.75rem;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 #toc a.active {

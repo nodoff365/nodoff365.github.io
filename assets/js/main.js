@@ -483,6 +483,20 @@
 
   function attachCodeCopyButtons() {
     if (!postContent) return;
+    const baseCopyShape = `
+      <rect x="3.5" y="3.5" width="11" height="11" rx="2.4" stroke="currentColor" stroke-width="1.7"/>
+      <rect x="9" y="9" width="11" height="11" rx="2.4" fill="var(--code-head-bg)" stroke="currentColor" stroke-width="1.7"/>
+    `;
+    const copyIcon = `
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        ${baseCopyShape}
+      </svg>
+    `;
+    const doneIcon = `
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M5.2 12.5 9.4 16.7 18.8 7.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    `;
     const blocks = Array.from(postContent.querySelectorAll("pre"));
     blocks.forEach((pre) => {
       if (pre.querySelector(".code-copy-btn")) return;
@@ -492,18 +506,23 @@
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "code-copy-btn";
-      btn.textContent = "Copy";
+      btn.innerHTML = copyIcon;
       btn.setAttribute("aria-label", "Copy code");
+      btn.setAttribute("title", "Copy");
 
       btn.addEventListener("click", async () => {
         const raw = code.innerText || code.textContent || "";
         const ok = await copyText(raw);
         if (!ok) return;
         btn.classList.add("copied");
-        btn.textContent = "Copied";
+        btn.innerHTML = doneIcon;
+        btn.setAttribute("aria-label", "Copied");
+        btn.setAttribute("title", "Copied");
         window.setTimeout(() => {
           btn.classList.remove("copied");
-          btn.textContent = "Copy";
+          btn.innerHTML = copyIcon;
+          btn.setAttribute("aria-label", "Copy code");
+          btn.setAttribute("title", "Copy");
         }, 1400);
       });
 
