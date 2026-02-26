@@ -87,6 +87,13 @@
   const tagParam = params.get("tag");
   const onPostsPath = window.location.pathname.replace(/\/+$/, "") === "/posts";
 
+  function normalizeFilterValue(value) {
+    return String(value || "")
+      .normalize("NFC")
+      .trim()
+      .toLowerCase();
+  }
+
   if (majorParam) {
     const postsNode = document.querySelector(".posts-node");
     postsNode?.classList.add("open");
@@ -131,15 +138,21 @@
     const paginationEl = document.getElementById("posts-pagination");
     const pageSize = 5;
     const cards = Array.from(postsList.querySelectorAll(".post-card"));
+    const majorNeedle = normalizeFilterValue(majorParam);
+    const minorNeedle = normalizeFilterValue(minorParam);
+    const tagNeedle = normalizeFilterValue(tagParam);
 
     const filtered = cards.filter((card) => {
-      const cardMajor = card.dataset.major || "";
-      const cardMinor = card.dataset.minor || "";
-      const cardTags = (card.dataset.tags || "").split("|").filter(Boolean);
+      const cardMajor = normalizeFilterValue(card.dataset.major || "");
+      const cardMinor = normalizeFilterValue(card.dataset.minor || "");
+      const cardTags = (card.dataset.tags || "")
+        .split("|")
+        .map((tag) => normalizeFilterValue(tag))
+        .filter(Boolean);
 
-      const majorMatch = !majorParam || cardMajor === majorParam;
-      const minorMatch = !minorParam || cardMinor === minorParam;
-      const tagMatch = !tagParam || cardTags.includes(tagParam);
+      const majorMatch = !majorNeedle || cardMajor === majorNeedle;
+      const minorMatch = !minorNeedle || cardMinor === minorNeedle;
+      const tagMatch = !tagNeedle || cardTags.includes(tagNeedle);
       return majorMatch && minorMatch && tagMatch;
     });
 

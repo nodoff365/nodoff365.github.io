@@ -27,6 +27,10 @@
   --tok-error: #f85149;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 html[data-theme="dark"] {
   --bg: #000000;
   --text: #ffffff;
