@@ -19,6 +19,7 @@ sudocmd 생성
 sudo로 허용할 "개별 명령 경로" 등록
 
 - 형식
+
 ```bash
 ipa sudocmd-add [명령어경로] #반드시 절대경로 사용
 
@@ -26,11 +27,13 @@ ipa sudocmd-add [명령어경로] #반드시 절대경로 사용
 ipa sudocmd-find  
 ipa sudocmd-show [명령어경로]
 ```
+
 ### 1.2 sudocmdgroup – 명령어 그룹 생성
 - 목적
 여러 명령을 하나의 그룹으로 묶어 관리
 
 - 형식
+
 ```bash
 # 그룹 생성
 ipa sudocmdgroup-add [명령그룹이름]
@@ -41,13 +44,14 @@ ipa sudocmdgroup-add-member [명령그룹이름] --sudocmds=[명령어경로]
 # 확인
 ipa sudocmdgroup-find  
 ipa sudocmdgroup-show [명령그룹이름]
-
 ```
+
 ### 1.3 sudorule – 실제 sudo 정책 생성
 - 목적
 누가 / 어디서 / 어떤 명령을 실행할 수 있는지 정의
 
 - 형식
+
 ```bash
 # 룰 생성
 ipa sudorule-add [룰이름]
