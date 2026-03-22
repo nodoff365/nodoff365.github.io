@@ -44,14 +44,7 @@
     updateGiscusTheme(theme);
   }
 
-  const storedTheme = localStorage.getItem("theme");
-  if (storedTheme === "dark" || storedTheme === "light") {
-    setTheme(storedTheme);
-  } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-    setTheme("dark");
-  } else {
-    setTheme("light");
-  }
+  setTheme("dark");
   syncGiscusThemeWhenReady();
 
   themeBtn?.addEventListener("click", () => {
