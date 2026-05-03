@@ -2,7 +2,7 @@
 title: "Windows에서 gcc 사용하기: MinGW-w64 환경 구축 가이드"
 date: 2026-03-18 00:00:00 +0900
 categories: [클라우드 기초, 시큐어 코딩]
-tags: [gcc, MinGW, Windows]
+tags: [GCC, MinGW]
 ---
 Windows 환경에서는 기본적으로 GCC(GNU Compiler Collection)가 제공되지 않기 때문에 C/C++ 소스코드를 컴파일하려면 별도의 컴파일러 설치가 필요하다.
 
