@@ -42,6 +42,11 @@ giscus:
   theme_light: "light"
   theme_dark: "transparent_dark"
 
+home:
+  major_category_order:
+    - "클라우드 기초 / 인프라 실습"
+    - "보안 / 모의해킹"
+
 defaults:
   - scope:
       path: ""

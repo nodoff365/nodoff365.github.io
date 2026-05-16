@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ko" data-theme="light">
   <head>
     {% include head.html %}
@@ -9,6 +9,9 @@
       {% include sidebar.html %}
       <main id="main-content" class="main-content">
         {{ content }}
+        <footer class="site-footer" role="contentinfo">
+          <p>© 2026 nodoff. All rights reserved.</p>
+        </footer>
       </main>
     </div>
     <div id="sidebar-overlay" class="sidebar-overlay"></div>
@@ -41,3 +44,4 @@
     <script src="{{ '/assets/js/metrics.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
   </body>
 </html>
+

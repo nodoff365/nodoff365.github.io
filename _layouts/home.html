@@ -2,35 +2,85 @@
 layout: default
 ---
 
-<section class="home-section" id="recent-posts">
-  <div class="section-head">
-    <h2>Recent Posts</h2>
-  </div>
-  <div class="card-grid">
-    {% for post in site.posts limit: 5 %}
-      {% include post-card.html post=post %}
-    {% endfor %}
-  </div>
-</section>
+<section class="home-list" id="home-list">
+  {% assign major_groups = site.posts | group_by_exp: "post", "post.categories[0]" %}
+  {% assign ordered_major = site.home.major_category_order | default: empty %}
 
-<section class="home-section" id="popular-posts">
-  <div class="section-head">
-    <h2>Popular Posts</h2>
-  </div>
-  <div class="card-grid sortable-grid" data-sort-type="reactions" data-display-limit="5">
-    {% for post in site.posts limit: 20 %}
-      {% include post-card.html post=post %}
+  {% for major_name in ordered_major %}
+    {% for major in major_groups %}
+      {% if major.name == major_name and major.name != "" %}
+        <section class="home-list-section">
+          <header class="home-list-head">
+            <h2>{{ major.name }}</h2>
+          </header>
+          <ul class="home-list-items">
+            {% assign sorted_posts = major.items | sort: "date" | reverse %}
+            {% for post in sorted_posts %}
+              <li class="home-list-item">
+                <a href="{{ post.url | relative_url }}" class="home-list-link">
+                  <h3 class="home-list-title">{{ post.title }}</h3>
+                  <p class="home-list-meta">
+                    <span>{{ post.date | date: "%Y-%m-%d" }}</span>
+                    <span class="dot">&middot;</span>
+                    <span class="metric">
+                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <circle cx="12" cy="12" r="2.8" stroke="currentColor" stroke-width="1.8"></circle>
+                      </svg>
+                      <span data-view-count data-post-url="{{ post.url }}">0</span>
+                    </span>
+                    <span class="metric">
+                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M12 20.5s-7-4.3-7-9.4C5 8.3 6.9 6.5 9.5 6.5c1.5 0 2.7.7 3.5 1.8.8-1.1 2-1.8 3.5-1.8 2.6 0 4.5 1.8 4.5 4.6 0 5.1-7 9.4-7 9.4z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                      </svg>
+                      <span data-reaction-count data-post-url="{{ post.url }}" data-post-slug="{{ post.slug }}">0</span>
+                    </span>
+                  </p>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endif %}
     {% endfor %}
-  </div>
-</section>
+  {% endfor %}
 
-<section class="home-section" id="viewed-posts">
-  <div class="section-head">
-    <h2>Most Viewed</h2>
-  </div>
-  <div class="card-grid sortable-grid" data-sort-type="views" data-display-limit="5">
-    {% for post in site.posts limit: 20 %}
-      {% include post-card.html post=post %}
-    {% endfor %}
-  </div>
+  {% for major in major_groups %}
+    {% unless ordered_major contains major.name %}
+      {% if major.name and major.name != "" %}
+        <section class="home-list-section">
+          <header class="home-list-head">
+            <h2>{{ major.name }}</h2>
+          </header>
+          <ul class="home-list-items">
+            {% assign sorted_posts = major.items | sort: "date" | reverse %}
+            {% for post in sorted_posts %}
+              <li class="home-list-item">
+                <a href="{{ post.url | relative_url }}" class="home-list-link">
+                  <h3 class="home-list-title">{{ post.title }}</h3>
+                  <p class="home-list-meta">
+                    <span>{{ post.date | date: "%Y-%m-%d" }}</span>
+                    <span class="dot">&middot;</span>
+                    <span class="metric">
+                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <circle cx="12" cy="12" r="2.8" stroke="currentColor" stroke-width="1.8"></circle>
+                      </svg>
+                      <span data-view-count data-post-url="{{ post.url }}">0</span>
+                    </span>
+                    <span class="metric">
+                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M12 20.5s-7-4.3-7-9.4C5 8.3 6.9 6.5 9.5 6.5c1.5 0 2.7.7 3.5 1.8.8-1.1 2-1.8 3.5-1.8 2.6 0 4.5 1.8 4.5 4.6 0 5.1-7 9.4-7 9.4z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                      </svg>
+                      <span data-reaction-count data-post-url="{{ post.url }}" data-post-slug="{{ post.slug }}">0</span>
+                    </span>
+                  </p>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endif %}
+    {% endunless %}
+  {% endfor %}
 </section>

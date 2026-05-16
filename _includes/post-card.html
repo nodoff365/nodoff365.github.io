@@ -1,15 +1,26 @@
 <article class="post-card" data-post-url="{{ include.post.url }}" data-post-slug="{{ include.post.slug }}" data-major="{{ include.post.categories[0] | default: '' | escape }}" data-minor="{{ include.post.categories[1] | default: '' | escape }}" data-tags="{% for tag in include.post.tags %}{{ tag | escape }}{% unless forloop.last %}|{% endunless %}{% endfor %}" data-reactions="0" data-views="0">
   <a href="{{ include.post.url | relative_url }}" class="card-link">
     <h3>{{ include.post.title }}</h3>
-    <p>{{ include.post.excerpt | strip_html | truncate: 110 }}</p>
+    <p class="card-meta post-row-meta">
+      <span class="meta-date">{{ include.post.date | date: "%Y-%m-%d" }}</span>
+      <span class="meta-dot meta-dot-1">&middot;</span>
+      <span class="meta-category">{{ include.post.categories[0] }} / {{ include.post.categories[1] }}</span>
+      <span class="meta-dot meta-dot-2">&middot;</span>
+      <span class="metric">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+          <circle cx="12" cy="12" r="2.8" stroke="currentColor" stroke-width="1.8"></circle>
+        </svg>
+        <span data-view-count data-post-url="{{ include.post.url }}">0</span>
+      </span>
+      <span class="meta-dot meta-dot-3">&middot;</span>
+      <span class="metric">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 20.5s-7-4.3-7-9.4C5 8.3 6.9 6.5 9.5 6.5c1.5 0 2.7.7 3.5 1.8.8-1.1 2-1.8 3.5-1.8 2.6 0 4.5 1.8 4.5 4.6 0 5.1-7 9.4-7 9.4z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <span data-reaction-count data-post-url="{{ include.post.url }}" data-post-slug="{{ include.post.slug }}">0</span>
+      </span>
+    </p>
+    <p class="card-excerpt">{{ include.post.excerpt | strip_html | truncate: 110 }}</p>
   </a>
-  <p class="card-meta">
-    <span>{{ include.post.date | date: "%Y-%m-%d" }}</span>
-    <span>&middot;</span>
-    <span>{{ include.post.categories[0] }} / {{ include.post.categories[1] }}</span>
-    <span>&middot;</span>
-    <span data-reaction-count data-post-url="{{ include.post.url }}" data-post-slug="{{ include.post.slug }}">Likes 0</span>
-    <span>&middot;</span>
-    <span data-view-count data-post-url="{{ include.post.url }}">Views 0</span>
-  </p>
 </article>

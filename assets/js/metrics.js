@@ -49,13 +49,15 @@
   }
 
   function setReaction(el, count) {
-    el.textContent = `Likes ${count}`;
+    const iconOnly = !!el.closest(".home-list-meta, .post-row-meta");
+    el.textContent = iconOnly ? `${count}` : `Likes ${count}`;
     const card = el.closest(".post-card");
     if (card) card.dataset.reactions = String(count);
   }
 
   function setView(el, count) {
-    el.textContent = `Views ${count}`;
+    const iconOnly = !!el.closest(".home-list-meta, .post-row-meta");
+    el.textContent = iconOnly ? `${count}` : `Views ${count}`;
     const card = el.closest(".post-card");
     if (card) card.dataset.views = String(count);
   }
