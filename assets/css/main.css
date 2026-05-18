@@ -848,10 +848,10 @@ html[data-theme="dark"] .theme-icon-sun {
 
 .post-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 860px) var(--toc-w);
-  gap: 28px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 980px) minmax(220px, 260px);
+  gap: 34px;
   align-items: start;
-  max-width: 1320px;
+  max-width: 1520px;
   margin: 0 auto;
 }
 
@@ -896,6 +896,7 @@ html[data-theme="dark"] .theme-icon-sun {
 .post-content p {
   margin: 0 0 1rem;
   color: color-mix(in srgb, var(--text) 92%, var(--muted) 8%);
+  white-space: normal;
 }
 
 .post-content a {
@@ -922,12 +923,17 @@ html[data-theme="dark"] .theme-icon-sun {
 
 .post-content ul,
 .post-content ol {
-  margin: 0 0 1rem 1.25rem;
-  padding: 0;
+  margin: 0 0 1rem 1.25rem !important;
+  padding-left: 1.1rem !important;
 }
 
 .post-content li + li {
   margin-top: 0.35rem;
+}
+
+/* Auto-fixed blocks that follow malformed markdown lists */
+.post-content .list-follow-block {
+  margin-left: 2.1rem;
 }
 
 .post-content ul li::marker {
@@ -945,6 +951,8 @@ html[data-theme="dark"] .theme-icon-sun {
 .post-content ol ol {
   margin-top: 0.35rem;
   margin-bottom: 0.45rem;
+  margin-left: 0.8rem !important;
+  padding-left: 1rem !important;
 }
 
 .post-content li > p {
@@ -1308,6 +1316,20 @@ html[data-theme="dark"] .theme-icon-sun {
   scroll-margin-top: calc(var(--topbar-h) + 18px);
   letter-spacing: -0.01em;
   line-height: 1.35;
+  font-weight: 700;
+}
+
+.post-content .numbered-heading {
+  position: relative;
+}
+
+.post-content .leveled-heading {
+  position: relative;
+}
+
+.post-content .empty-bullet-item {
+  list-style-position: outside;
+  min-height: 0.8em;
 }
 
 .post-content h1 {
@@ -1325,10 +1347,17 @@ html[data-theme="dark"] .theme-icon-sun {
   margin: 1.2rem 0 0.7rem;
 }
 
-.post-content h4,
-.post-content h5,
-.post-content h6 {
+.post-content h4 {
   margin: 1rem 0 0.6rem;
+}
+
+.post-content h5 {
+  margin: 0.95rem 0 0.55rem;
+}
+
+.post-content h6 {
+  margin: 0.9rem 0 0.5rem;
+  color: var(--muted);
 }
 
 .post-taxonomy {
@@ -1426,7 +1455,7 @@ html[data-theme="dark"] .theme-icon-sun {
   position: sticky;
   right: auto;
   top: calc(var(--topbar-h) + 18px);
-  margin-left: 50px;
+  margin-left: 72px;
   max-height: calc(100vh - var(--topbar-h) - 30px);
   overflow-y: auto;
   overflow-x: hidden;

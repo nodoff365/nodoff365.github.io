@@ -469,6 +469,79 @@
     });
   }
 
+  function autoFixListFollowBlocks() {
+    if (!postContent) return;
+    const children = Array.from(postContent.children);
+    const isList = (el) => el && (el.tagName === "OL" || el.tagName === "UL");
+    const isCodeLike = (el) => el && (el.tagName === "PRE" || el.classList.contains("highlight") || el.classList.contains("highlighter-rouge"));
+
+    for (let i = 0; i < children.length - 1; i += 1) {
+      const cur = children[i];
+      const next = children[i + 1];
+      if (!isList(cur) || !isCodeLike(next)) continue;
+
+      // Typical broken markdown pattern: one-item list + code block + next list start
+      const liCount = cur.querySelectorAll(":scope > li").length;
+      if (liCount <= 1) {
+        next.classList.add("list-follow-block");
+      }
+    }
+  }
+
+  function autoIndentNumberedHeadings() {
+    if (!postContent) return;
+    const heads = Array.from(postContent.querySelectorAll("h1, h2, h3, h4, h5, h6"));
+    heads.forEach((h) => {
+      const txt = (h.textContent || "").trim();
+      // Match numbering like: 4.1 title / 2.3.1 title
+      const m = txt.match(/^(\d+(?:\.\d+)+)\s+/);
+      if (!m) return;
+      const seq = m[1];
+      const depth = seq.split(".").length - 1; // 4.1 => 1, 2.3.1 => 2
+      h.classList.add("numbered-heading");
+      h.style.marginLeft = `${depth * 1.05}rem`;
+    });
+  }
+
+  function autoIndentByHeadingLevel() {
+    if (!postContent) return;
+    const heads = Array.from(postContent.querySelectorAll("h1, h2, h3, h4, h5, h6"));
+    if (heads.length === 0) return;
+
+    const levels = heads.map((h) => Number(h.tagName.replace("H", "")));
+    const minLevel = Math.min(...levels);
+
+    heads.forEach((h) => {
+      if (h.classList.contains("numbered-heading")) return;
+      const lv = Number(h.tagName.replace("H", ""));
+      const depth = Math.max(0, lv - minLevel);
+      if (depth <= 0) return;
+      h.classList.add("leveled-heading");
+      h.style.marginLeft = `${depth * 0.85}rem`;
+    });
+  }
+
+  function autoIndentEmptyBullets() {
+    if (!postContent) return;
+    const lists = Array.from(postContent.querySelectorAll("ul, ol"));
+    lists.forEach((list) => {
+      const items = Array.from(list.children).filter((el) => el.tagName === "LI");
+      let runDepth = 0;
+      items.forEach((li) => {
+        const text = (li.textContent || "").replace(/\s+/g, "");
+        const hasChildList = !!li.querySelector(":scope > ul, :scope > ol");
+        const isEmptyBullet = text.length === 0 && !hasChildList;
+        if (isEmptyBullet) {
+          runDepth += 1;
+          li.classList.add("empty-bullet-item");
+          li.style.marginLeft = `${Math.min(runDepth, 6) * 0.85}rem`;
+        } else {
+          runDepth = 0;
+        }
+      });
+    });
+  }
+
   async function copyText(text) {
     try {
       await navigator.clipboard.writeText(text);
@@ -666,6 +739,10 @@
 
   annotateCodeBlocks();
   enhanceMarkdownCallouts();
+  autoFixListFollowBlocks();
+  autoIndentNumberedHeadings();
+  autoIndentByHeadingLevel();
+  autoIndentEmptyBullets();
   attachCodeCopyButtons();
   initScrollJumpButton();
   updateFilterBreadcrumb();

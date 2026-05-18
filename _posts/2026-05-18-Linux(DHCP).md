@@ -4,7 +4,6 @@ date: 2026-05-18 00:00:00 +0900
 categories: [클라우드 기초, 인프라 실습]
 tags: [dhcp, rocky-linux, windows, apipa, network]
 ---
-
 ## 1. DHCP란?
 
 DHCP(Dynamic Host Configuration Protocol)는 네트워크에 연결된 클라이언트에게 IP 주소, 서브넷마스크, 게이트웨이, DNS 등을 자동으로 할당해주는 프로토콜이다.
@@ -14,7 +13,7 @@ DHCP(Dynamic Host Configuration Protocol)는 네트워크에 연결된 클라이
 - 프로토콜: **UDP**
 - 서버 포트: **67** / 클라이언트 포트: **68**
 
-### DORA 동작 흐름
+DORA 동작 흐름
 
 클라이언트가 처음 네트워크에 연결되면 아래 4단계로 IP를 받아온다.
 
@@ -47,7 +46,7 @@ DHCP(Dynamic Host Configuration Protocol)는 네트워크에 연결된 클라이
 
 ## 3. Rocky Linux DHCP 서버 구성
 
-### 3.1 패키지 설치
+3.1 패키지 설치
 
 ```bash
 dnf install -y dhcp-server
@@ -55,7 +54,7 @@ dnf install -y dhcp-server
 
 dnf는 기본적으로 의존성 패키지를 함께 설치하며, `-y` 옵션으로 설치 중 확인 질문을 자동으로 넘긴다.
 
-### 3.2 설정 파일 준비
+3.2 설정 파일 준비
 
 설치 후 `/etc/dhcp/dhcpd.conf`가 생성되지만 내용이 비어있다.  
 패키지에 포함된 예시 파일을 활용해 작성한다.
@@ -78,7 +77,7 @@ vi 안에서 아래 명령어로 예시 내용을 파일 끝에 붙여넣는다.
 :$r /usr/share/doc/dhcp-server/dhcpd.conf.example
 ```
 
-### 3.3 설정 파일 편집
+3.3 설정 파일 편집
 
 예시 파일에는 불필요한 내용이 많다. 필요한 부분만 남기고 삭제한다.
 
@@ -108,14 +107,14 @@ subnet 10.0.0.0 netmask 255.255.255.0 {
 
 [캡처 - dhcpd.conf 설정 완료 화면]
 
-### 3.4 서비스 시작
+3.4 서비스 시작
+
+[캡처 - systemctl status dhcpd 정상 실행 화면]
 
 ```bash
 systemctl enable --now dhcpd   # 시작 + 재부팅 후 자동 실행
 systemctl status dhcpd         # 상태 확인
 ```
-
-[캡처 - systemctl status dhcpd 정상 실행 화면]
 
 오류가 발생하면 아래 명령어로 로그를 확인한다.
 
@@ -123,7 +122,7 @@ systemctl status dhcpd         # 상태 확인
 journalctl -xe
 ```
 
-### 3.5 임대 현황 확인
+3.5 임대 현황 확인
 
 DHCP 서버가 어떤 클라이언트에게 IP를 할당했는지 확인할 수 있다.
 
@@ -135,11 +134,13 @@ cat /var/lib/dhcpd/dhcpd.leases
 
 ## 4. Windows 10/11 클라이언트 테스트
 
-### 4.1 IP 자동 설정으로 변경
+4.1 IP 자동 설정으로 변경
 
 `실행(Win+R) → ncpa.cpl → Ethernet0 우클릭 → 속성 → 인터넷 프로토콜 버전 4(TCP/IPv4) → 자동으로 IP 주소 받기`
 
-### 4.2 IP 확인 및 갱신
+4.2 IP 확인 및 갱신
+
+[캡처 - ipconfig /all 결과, DHCP 서버 주소 및 할당 IP 확인]
 
 cmd에서 아래 명령어로 테스트한다.
 
@@ -148,8 +149,6 @@ ipconfig /all       # 전체 IP 구성 정보 확인 (DHCP 서버 주소도 표�
 ipconfig /release   # 현재 IP 반납
 ipconfig /renew     # DHCP 서버로부터 새 IP 요청
 ```
-
-[캡처 - ipconfig /all 결과, DHCP 서버 주소 및 할당 IP 확인]
 
 ---
 
@@ -161,20 +160,20 @@ DHCP 서버가 꺼진 상태에서 클라이언트가 IP를 요청하면 서버�
 - 대역: `169.254.0.0/16`
 - 게이트웨이 없음 → 외부 통신 불가, 같은 대역 내 로컬 통신만 가능
 
-### 테스트 순서
+테스트 순서
 
 1. Rocky에서 dhcpd 중지
 
-```bash
-systemctl stop dhcpd
-```
+   ```bash
+   systemctl stop dhcpd
+   ```
 
 2. Win10/11에서 IP 갱신 시도
 
-```
-ipconfig /release
-ipconfig /renew
-```
+   ```
+   ipconfig /release
+   ipconfig /renew
+   ```
 
 3. `169.254.x.x` 주소가 할당되는 것 확인
 
@@ -187,20 +186,20 @@ ipconfig /renew
 특정 클라이언트에게 항상 동일한 IP를 할당하고 싶을 때 MAC 주소를 기반으로 예약할 수 있다.  
 서버나 특정 장비처럼 IP가 고정되어야 하는 경우에 유용하다.
 
-### 6.1 Windows에서 MAC 주소 변경 (테스트용)
+6.1 Windows에서 MAC 주소 변경 (테스트용)
 
 실제 MAC 주소 대신 테스트용 임의 주소로 변경해서 예약 동작을 확인한다.
 
 `실행(Win+R) → ncpa.cpl → Ethernet0 우클릭 → 속성 → 구성 → 고급 → Locally Administered Address → 값 체크 → 주소 입력 → 확인`
+
+[캡처 - Locally Administered Address 값 입력 화면]
 
 - Windows 10: `000000000001`
 - Windows 11: `000000000002`
 
 변경 후 `ipconfig /all`에서 MAC 주소가 바뀐 것을 확인할 수 있다.
 
-[캡처 - Locally Administered Address 값 입력 화면]
-
-### 6.2 dhcpd.conf에 예약 추가
+6.2 dhcpd.conf에 예약 추가
 
 ```bash
 vi /etc/dhcp/dhcpd.conf
@@ -220,12 +219,14 @@ host win11 {
 }
 ```
 
+[캡처 - dhcpd.conf 예약 설정 완료 화면]
+
 > MAC 주소 구분자를 `-`로 복사한 경우 `:`으로 바꿔야 한다.  
 > vi에서 `11s/-/:/g` 명령어로 해당 줄의 `-`를 모두 `:`으로 치환할 수 있다.
 
-[캡처 - dhcpd.conf 예약 설정 완료 화면]
+6.3 서비스 재시작 및 확인
 
-### 6.3 서비스 재시작 및 확인
+[캡처 - 예약 IP(10.0.0.101, 10.0.0.201) 할당 확인]
 
 ```bash
 systemctl restart dhcpd
@@ -233,19 +234,17 @@ systemctl restart dhcpd
 
 Win10/11에서 `ipconfig /release` 후 `ipconfig /renew`를 실행하면 예약한 IP로 할당되는 것을 확인할 수 있다.
 
-[캡처 - 예약 IP(10.0.0.101, 10.0.0.201) 할당 확인]
-
 ---
 
 ## 7. 정리 및 초기화
 
-### DHCP 서비스 중지
+DHCP 서비스 중지
 
 ```bash
 systemctl stop dhcpd
 ```
 
-### DHCP 서버 삭제
+DHCP 서버 삭제
 
 ```bash
 dnf autoremove -y dhcp-server
