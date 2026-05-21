@@ -530,10 +530,15 @@ html[data-theme="dark"] .theme-icon-sun {
 }
 
 .home-list-title {
+  display: block;
   margin: 0 0 6px;
   font-size: 1.02rem;
   line-height: 1.35;
   font-weight: 700;
+  max-width: 66%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .home-list-meta {
@@ -897,6 +902,35 @@ html[data-theme="dark"] .theme-icon-sun {
   margin: 0 0 1rem;
   color: color-mix(in srgb, var(--text) 92%, var(--muted) 8%);
   white-space: normal;
+}
+
+/* Protect post text from selection/copy (except code/controls) */
+.post-article {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.post-article * {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.post-article pre,
+.post-article pre *,
+.post-article code,
+.post-article .code-copy-btn,
+.post-article input,
+.post-article textarea,
+.post-article select,
+.post-article [contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.post-article .code-copy-btn {
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .post-content a {
@@ -1838,6 +1872,19 @@ html[data-theme="dark"] .theme-icon-sun {
   .main-content {
     margin-left: 0;
     padding: 16px;
+  }
+
+  .home-list-link::before {
+    width: 100%;
+  }
+
+  #posts-list::before,
+  #posts-list .post-card .card-link::after,
+  #posts-list .post-card .card-link::before,
+  .home-list-item::after,
+  .home-list-head::after {
+    width: 100%;
+    right: 0;
   }
 
   #recent-posts .card-grid {

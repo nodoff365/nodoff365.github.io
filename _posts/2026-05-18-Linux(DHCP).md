@@ -13,7 +13,8 @@ DHCP(Dynamic Host Configuration Protocol)는 네트워크에 연결된 클라이
 - 프로토콜: **UDP**
 - 서버 포트: **67** / 클라이언트 포트: **68**
 
-DORA 동작 흐름
+<br>
+**DORA 동작 흐름**
 
 클라이언트가 처음 네트워크에 연결되면 아래 4단계로 IP를 받아온다.
 

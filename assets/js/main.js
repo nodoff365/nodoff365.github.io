@@ -670,6 +670,93 @@
     update();
   }
 
+  function initPostContentProtection() {
+    const content = document.querySelector(".post-article");
+    if (!content) return;
+
+    function isAllowedTarget(target) {
+      if (!(target instanceof Element)) return false;
+      return !!target.closest(
+        "pre, code, .code-copy-btn, input, textarea, select, [contenteditable='true'], iframe.giscus-frame, .giscus, .comments"
+      );
+    }
+
+    function inProtectedArea(target) {
+      return target instanceof Element && !!target.closest(".post-article");
+    }
+
+    function shouldBlock(target) {
+      return inProtectedArea(target) && !isAllowedTarget(target);
+    }
+
+    function isCodeArea(target) {
+      return target instanceof Element && !!target.closest("pre, code, .highlight, .highlighter-rouge, .code-copy-btn");
+    }
+
+    document.addEventListener("contextmenu", (e) => {
+      if (shouldBlock(e.target)) e.preventDefault();
+    }, true);
+
+    document.addEventListener("copy", (e) => {
+      if (shouldBlock(e.target)) e.preventDefault();
+    }, true);
+
+    document.addEventListener("cut", (e) => {
+      if (shouldBlock(e.target)) e.preventDefault();
+    }, true);
+
+    document.addEventListener("selectstart", (e) => {
+      if (shouldBlock(e.target)) e.preventDefault();
+    }, true);
+
+    document.addEventListener("dragstart", (e) => {
+      if (shouldBlock(e.target)) e.preventDefault();
+    }, true);
+
+    document.addEventListener("mousedown", (e) => {
+      if (shouldBlock(e.target)) e.preventDefault();
+    }, true);
+
+    document.addEventListener("touchstart", (e) => {
+      if (shouldBlock(e.target)) e.preventDefault();
+    }, { capture: true, passive: false });
+
+    document.addEventListener("keydown", (e) => {
+      if (!shouldBlock(e.target)) return;
+      const ctrlOrMeta = e.ctrlKey || e.metaKey;
+      if (ctrlOrMeta && (e.key === "c" || e.key === "C" || e.key === "a" || e.key === "A" || e.key === "x" || e.key === "X")) {
+        e.preventDefault();
+      }
+    }, true);
+
+    // If selection starts in code then drifts into normal article text,
+    // clear it so body text still cannot be selected.
+    document.addEventListener("selectionchange", () => {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+      const anchorNode = sel.anchorNode;
+      const focusNode = sel.focusNode;
+      if (!anchorNode || !focusNode) return;
+
+      const aEl = anchorNode.nodeType === 1 ? anchorNode : anchorNode.parentElement;
+      const fEl = focusNode.nodeType === 1 ? focusNode : focusNode.parentElement;
+      if (!(aEl instanceof Element) || !(fEl instanceof Element)) return;
+
+      const withinArticle = !!aEl.closest(".post-article") || !!fEl.closest(".post-article");
+      if (!withinArticle) return;
+
+      const anchorCode = isCodeArea(aEl);
+      const focusCode = isCodeArea(fEl);
+      if (anchorCode && focusCode) return; // pure code selection allowed
+
+      const anchorAllowed = isAllowedTarget(aEl);
+      const focusAllowed = isAllowedTarget(fEl);
+      if (anchorAllowed && focusAllowed) return; // allowed fields
+
+      sel.removeAllRanges();
+    });
+  }
+
   function slugify(text) {
     return text
       .toLowerCase()
@@ -745,5 +832,6 @@
   autoIndentEmptyBullets();
   attachCodeCopyButtons();
   initScrollJumpButton();
+  initPostContentProtection();
   updateFilterBreadcrumb();
 })();
