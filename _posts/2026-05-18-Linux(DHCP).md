@@ -27,7 +27,11 @@ DHCP(Dynamic Host Configuration Protocol)는 네트워크에 연결된 클라이
 
 > 초기 통신은 클라이언트에 IP가 없기 때문에 Broadcast로 진행된다.
 
+<br>
+
 ---
+
+<br>
 
 ## 2. 실습 환경
 
@@ -43,19 +47,23 @@ DHCP(Dynamic Host Configuration Protocol)는 네트워크에 연결된 클라이
 | DNS | 168.126.63.1, 8.8.8.8 |
 | 클라이언트 | Windows 10, Windows 11 |
 
+<br>
+
 ---
+
+<br>
 
 ## 3. Rocky Linux DHCP 서버 구성
 
-3.1 패키지 설치
+<br>**3.1 패키지 설치**
 
 ```bash
 dnf install -y dhcp-server
 ```
 
-dnf는 기본적으로 의존성 패키지를 함께 설치하며, `-y` 옵션으로 설치 중 확인 질문을 자동으로 넘긴다.
+dnf는 기본적으로 의존성 패키지를 함께 설치하며, `-y` 옵션으로 설치 중 확인 질문을 자동으로 넘긴다.<br>
 
-3.2 설정 파일 준비
+<br>**3.2 설정 파일 준비**
 
 설치 후 `/etc/dhcp/dhcpd.conf`가 생성되지만 내용이 비어있다.  
 패키지에 포함된 예시 파일을 활용해 작성한다.
@@ -78,7 +86,7 @@ vi 안에서 아래 명령어로 예시 내용을 파일 끝에 붙여넣는다.
 :$r /usr/share/doc/dhcp-server/dhcpd.conf.example
 ```
 
-3.3 설정 파일 편집
+<br>**3.3 설정 파일 편집**
 
 예시 파일에는 불필요한 내용이 많다. 필요한 부분만 남기고 삭제한다.
 
@@ -108,7 +116,7 @@ subnet 10.0.0.0 netmask 255.255.255.0 {
 
 [캡처 - dhcpd.conf 설정 완료 화면]
 
-3.4 서비스 시작
+<br>**3.4 서비스 시작**
 
 [캡처 - systemctl status dhcpd 정상 실행 화면]
 
@@ -123,7 +131,7 @@ systemctl status dhcpd         # 상태 확인
 journalctl -xe
 ```
 
-3.5 임대 현황 확인
+<br>**3.5 임대 현황 확인**
 
 DHCP 서버가 어떤 클라이언트에게 IP를 할당했는지 확인할 수 있다.
 
@@ -131,15 +139,19 @@ DHCP 서버가 어떤 클라이언트에게 IP를 할당했는지 확인할 수 
 cat /var/lib/dhcpd/dhcpd.leases
 ```
 
+<br>
+
 ---
+
+<br>
 
 ## 4. Windows 10/11 클라이언트 테스트
 
-4.1 IP 자동 설정으로 변경
+<br>**4.1 IP 자동 설정으로 변경**
 
 `실행(Win+R) → ncpa.cpl → Ethernet0 우클릭 → 속성 → 인터넷 프로토콜 버전 4(TCP/IPv4) → 자동으로 IP 주소 받기`
 
-4.2 IP 확인 및 갱신
+<br>**4.2 IP 확인 및 갱신**
 
 [캡처 - ipconfig /all 결과, DHCP 서버 주소 및 할당 IP 확인]
 
@@ -151,7 +163,11 @@ ipconfig /release   # 현재 IP 반납
 ipconfig /renew     # DHCP 서버로부터 새 IP 요청
 ```
 
+<br>
+
 ---
+
+<br>
 
 ## 5. APIPA 동작 확인
 
@@ -161,7 +177,7 @@ DHCP 서버가 꺼진 상태에서 클라이언트가 IP를 요청하면 서버�
 - 대역: `169.254.0.0/16`
 - 게이트웨이 없음 → 외부 통신 불가, 같은 대역 내 로컬 통신만 가능
 
-테스트 순서
+**테스트 순서**
 
 1. Rocky에서 dhcpd 중지
 
@@ -180,14 +196,18 @@ DHCP 서버가 꺼진 상태에서 클라이언트가 IP를 요청하면 서버�
 
 [캡처 - APIPA 주소(169.254.x.x) 할당된 ipconfig /all 결과]
 
+<br>
+
 ---
+
+<br>
 
 ## 6. MAC 주소 기반 IP 예약
 
 특정 클라이언트에게 항상 동일한 IP를 할당하고 싶을 때 MAC 주소를 기반으로 예약할 수 있다.  
 서버나 특정 장비처럼 IP가 고정되어야 하는 경우에 유용하다.
 
-6.1 Windows에서 MAC 주소 변경 (테스트용)
+<br>**6.1 Windows에서 MAC 주소 변경 (테스트용)**
 
 실제 MAC 주소 대신 테스트용 임의 주소로 변경해서 예약 동작을 확인한다.
 
@@ -200,7 +220,7 @@ DHCP 서버가 꺼진 상태에서 클라이언트가 IP를 요청하면 서버�
 
 변경 후 `ipconfig /all`에서 MAC 주소가 바뀐 것을 확인할 수 있다.
 
-6.2 dhcpd.conf에 예약 추가
+<br>**6.2 dhcpd.conf에 예약 추가**
 
 ```bash
 vi /etc/dhcp/dhcpd.conf
@@ -225,7 +245,7 @@ host win11 {
 > MAC 주소 구분자를 `-`로 복사한 경우 `:`으로 바꿔야 한다.  
 > vi에서 `11s/-/:/g` 명령어로 해당 줄의 `-`를 모두 `:`으로 치환할 수 있다.
 
-6.3 서비스 재시작 및 확인
+<br>**6.3 서비스 재시작 및 확인**
 
 [캡처 - 예약 IP(10.0.0.101, 10.0.0.201) 할당 확인]
 
@@ -235,7 +255,11 @@ systemctl restart dhcpd
 
 Win10/11에서 `ipconfig /release` 후 `ipconfig /renew`를 실행하면 예약한 IP로 할당되는 것을 확인할 수 있다.
 
+<br>
+
 ---
+
+<br>
 
 ## 7. 정리 및 초기화
 
@@ -253,5 +277,3 @@ rm -rf /etc/dhcp/ /var/lib/dhcpd
 ```
 
 > `autoremove`는 dhcp-server와 함께 설치됐지만 더 이상 필요하지 않은 의존성 패키지도 함께 제거한다.
-
----
