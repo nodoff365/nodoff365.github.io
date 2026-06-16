@@ -1,11 +1,11 @@
 ﻿:root {
-  --bg: #ffffff;
+  --bg: #eceef1;
   --text: #18181b;
   --muted: #6b6b76;
-  --line: #e7e7ea;
-  --line-strong: #d6d6db;
+  --line: #e3e4e8;
+  --line-strong: #d2d3d8;
   --surface: #ffffff;
-  --surface-2: #f5f5f6;
+  --surface-2: #f4f5f7;
   --accent: #18181b;
   --topbar-h: 66px;
   --sidebar-w: 264px;
@@ -41,13 +41,13 @@
 }
 
 html[data-theme="dark"] {
-  --bg: #0b0b0c;
+  --bg: #08080a;
   --text: #f4f4f5;
   --muted: #9b9ba6;
-  --line: #262629;
-  --line-strong: #38383d;
-  --surface: #18181b;
-  --surface-2: #161619;
+  --line: #2a2a2f;
+  --line-strong: #3a3a40;
+  --surface: #161619;
+  --surface-2: #1d1d21;
   --accent: #fafafa;
   --nav-pill-bg: rgba(250, 250, 250, 0.08);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
@@ -140,9 +140,9 @@ a {
   left: 0;
   right: 0;
   height: var(--topbar-h);
-  background: color-mix(in srgb, var(--bg) 80%, transparent);
-  backdrop-filter: saturate(180%) blur(12px);
-  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
   border-bottom: 1px solid var(--line);
   border-radius: 0 !important;
   display: flex;
@@ -315,7 +315,8 @@ a {
   width: var(--sidebar-w);
   border-right: 1px solid var(--line);
   border-radius: 0 !important;
-  background: var(--bg);
+  background: var(--surface);
+  box-shadow: 1px 0 0 var(--line), 6px 0 24px rgba(0, 0, 0, 0.04);
   position: fixed;
   left: 0;
   top: var(--topbar-h);
@@ -1921,6 +1922,121 @@ html[data-theme="dark"] .theme-icon-sun {
 #posts-list .post-row-meta .meta-dot-2,
 #posts-list .post-row-meta .meta-dot-3 {
   display: inline !important;
+}
+
+/* ===== Layered / card design ===== */
+.home-list-section {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 14px 18px 16px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.home-list-section + .home-list-section {
+  margin-top: 0;
+}
+
+.home-list-head {
+  padding: 6px 2px 12px;
+}
+
+.home-list-head::after {
+  left: 2px;
+  right: 2px;
+}
+
+.home-list-items {
+  display: grid;
+  gap: 8px;
+  padding-top: 12px;
+}
+
+.home-list-item::after {
+  display: none;
+}
+
+.home-list-link {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.home-list-link::before {
+  display: none;
+}
+
+.home-list-link:hover,
+.home-list-link:active {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+  border-color: var(--line-strong);
+}
+
+/* Posts / tags / search container as a panel */
+.page-section {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+#posts-list.card-grid {
+  display: grid;
+  gap: 8px;
+}
+
+#posts-list::before {
+  display: none;
+}
+
+#posts-list .post-card + .post-card {
+  margin-top: 0 !important;
+}
+
+#posts-list .post-card .card-link {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+#posts-list .post-card .card-link::after,
+#posts-list .post-card .card-link::before {
+  display: none;
+}
+
+#posts-list .post-card .card-link:hover,
+#posts-list .post-card .card-link:active {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+  border-color: var(--line-strong);
+}
+
+/* Search-results page cards */
+#search-page-results.card-grid {
+  display: grid;
+  gap: 8px;
+}
+
+/* Post article as an elevated panel */
+.post-article {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 30px 34px;
+  box-shadow: var(--shadow-sm);
+}
+
+.post-content {
+  border-top: 1px solid var(--line);
+  border-bottom: 0;
+  padding-bottom: 18px;
 }
 
 @media (max-width: 1100px) {
