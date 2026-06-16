@@ -15,6 +15,10 @@
         <a href="{{ '/' | relative_url }}" class="{% if page.url == '/' %}active{% endif %}">Home</a>
       </li>
 
+      <li>
+        <a href="{{ '/projects/' | relative_url }}" class="{% if page.url contains '/projects/' %}active{% endif %}">Projects</a>
+      </li>
+
       <li class="tree-node posts-node {% if page.url contains '/posts/' %}open{% endif %}">
         <div class="tree-item">
           <a href="{{ '/posts/' | relative_url }}" class="tree-link posts-link">Posts ({{ total_posts }})</a>
