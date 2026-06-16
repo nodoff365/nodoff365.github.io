@@ -465,7 +465,8 @@ a {
   height: 20px;
 }
 
-.github-icon-btn {
+.github-icon-btn,
+.mail-icon-btn {
   width: 44px;
   height: 44px;
   border: 1px solid var(--line);
@@ -473,6 +474,11 @@ a {
   color: var(--text);
   border-radius: 10px;
   text-decoration: none;
+}
+
+.mail-icon-btn svg {
+  width: 20px;
+  height: 20px;
 }
 
 .theme-icon-sun {
