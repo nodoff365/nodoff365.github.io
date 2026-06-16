@@ -16,7 +16,7 @@
   --nav-pill-bg: rgba(24, 24, 27, 0.06);
   --shadow-sm: 0 1px 2px rgba(24, 24, 27, 0.05), 0 1px 3px rgba(24, 24, 27, 0.06);
   --shadow-md: 0 4px 14px rgba(24, 24, 27, 0.08), 0 2px 6px rgba(24, 24, 27, 0.06);
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", "Malgun Gothic", system-ui, sans-serif;
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", "Malgun Gothic", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", "Consolas", "Cascadia Code", "Fira Code", "Noto Sans Mono CJK KR", "Malgun Gothic", monospace;
   --code-bg: #0f1117;
   --code-head-bg: #0b0d12;
@@ -147,10 +147,24 @@ a {
   border-radius: 0 !important;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 12px;
   padding: 0 22px;
   z-index: 1000;
+}
+
+.topbar-brand {
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topbar-brand:hover {
+  opacity: 0.7;
 }
 
 .menu-toggle {
@@ -480,7 +494,18 @@ html[data-theme="dark"] .theme-icon-sun {
   min-height: calc(100vh - var(--topbar-h));
   margin-left: var(--sidebar-w);
   width: calc(100vw - var(--sidebar-w));
-  padding: 22px;
+  padding: 30px clamp(22px, 5vw, 56px) 56px;
+}
+
+/* Center reading content on wide screens (post pages manage their own width) */
+.main-content > .home-list,
+.main-content > .page-section,
+.main-content > .breadcrumb,
+.main-content > .site-footer {
+  width: 100%;
+  max-width: 880px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .site-footer {
@@ -561,8 +586,9 @@ html[data-theme="dark"] .theme-icon-sun {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 0;
-  width: 66%;
+  left: -10px;
+  right: -10px;
+  border-radius: 10px;
   background: var(--nav-pill-bg);
   opacity: 0;
   pointer-events: none;
@@ -576,10 +602,11 @@ html[data-theme="dark"] .theme-icon-sun {
 .home-list-title {
   display: block;
   margin: 0 0 6px;
-  font-size: 1.02rem;
-  line-height: 1.35;
-  font-weight: 700;
-  max-width: 66%;
+  font-size: 1.05rem;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1758,19 +1785,10 @@ html[data-theme="dark"] .theme-icon-sun {
   content: "";
   position: absolute;
   left: 0;
-  right: 34%;
+  right: 0;
   bottom: 0;
-  height: 3px;
-  background:
-    linear-gradient(
-      to bottom,
-      var(--line) 0,
-      var(--line) 1px,
-      transparent 1px,
-      transparent 2px,
-      var(--line) 2px,
-      var(--line) 3px
-    );
+  height: 1px;
+  background: var(--line);
 }
 
 .home-list-items {
@@ -1791,8 +1809,8 @@ html[data-theme="dark"] .theme-icon-sun {
   content: "";
   position: absolute;
   left: 0;
+  right: 0;
   bottom: 0;
-  width: 66%;
   border-top: 1px solid var(--line);
 }
 
@@ -1812,13 +1830,13 @@ html[data-theme="dark"] .theme-icon-sun {
 #posts-list .post-card .card-link {
   display: block;
   position: relative;
-  padding: 12px 2px;
+  padding: 14px 2px;
 }
 
 #posts-list::before {
   content: "";
   display: block;
-  width: 66%;
+  width: 100%;
   border-top: 1px solid var(--line);
 }
 
@@ -1826,8 +1844,8 @@ html[data-theme="dark"] .theme-icon-sun {
   content: "";
   position: absolute;
   left: 0;
+  right: 0;
   bottom: 0;
-  width: 66%;
   border-top: 1px solid var(--line);
 }
 
@@ -1836,8 +1854,9 @@ html[data-theme="dark"] .theme-icon-sun {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 0;
-  width: 66%;
+  left: -10px;
+  right: -10px;
+  border-radius: 10px;
   background: var(--nav-pill-bg);
   opacity: 0;
   pointer-events: none;
