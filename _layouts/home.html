@@ -2,13 +2,52 @@
 layout: default
 ---
 
-<section class="home-list" id="home-list">
-  {% assign major_groups = site.posts | group_by_exp: "post", "post.categories[0]" %}
-  {% assign ordered_major = site.home.major_category_order | default: empty %}
+{% assign major_groups = site.posts | group_by_exp: "post", "post.categories[0]" %}
+{% assign ordered_major = site.home.major_category_order | default: empty %}
 
+{% capture eye_svg %}<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="12" cy="12" r="2.8" stroke="currentColor" stroke-width="1.8"></circle></svg>{% endcapture %}
+{% capture heart_svg %}<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 20.5s-7-4.3-7-9.4C5 8.3 6.9 6.5 9.5 6.5c1.5 0 2.7.7 3.5 1.8.8-1.1 2-1.8 3.5-1.8 2.6 0 4.5 1.8 4.5 4.6 0 5.1-7 9.4-7 9.4z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>{% endcapture %}
+
+<div class="home-list" id="home-list">
+  {%- comment -%} Featured portfolio: Project posts {%- endcomment -%}
+  {% assign project_group = nil %}
+  {% for major in major_groups %}
+    {% if major.name == "Project" %}{% assign project_group = major %}{% endif %}
+  {% endfor %}
+
+  {% if project_group %}
+    <section class="projects-section">
+      <header class="projects-head">
+        <span class="projects-eyebrow">PORTFOLIO</span>
+        <h2>Projects</h2>
+      </header>
+      <div class="projects-grid">
+        {% assign project_posts = project_group.items | sort: "date" | reverse %}
+        {% for post in project_posts %}
+          <a href="{{ post.url | relative_url }}" class="project-card">
+            <h3 class="project-card-title">{{ post.title }}</h3>
+            <p class="project-card-excerpt">{{ post.excerpt | strip_html | normalize_whitespace | truncate: 120 }}</p>
+            <p class="project-card-meta home-list-meta">
+              <span>{{ post.date | date: "%Y-%m-%d" }}</span>
+              <span class="dot">&middot;</span>
+              <span class="metric">{{ eye_svg }}<span data-view-count data-post-url="{{ post.url }}">0</span></span>
+              <span class="metric">{{ heart_svg }}<span data-reaction-count data-post-url="{{ post.url }}" data-post-slug="{{ post.slug }}">0</span></span>
+            </p>
+            {% if post.tags and post.tags.size > 0 %}
+              <p class="project-card-tags">
+                {% for tag in post.tags %}<span class="project-tag">#{{ tag }}</span>{% endfor %}
+              </p>
+            {% endif %}
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  {%- comment -%} Regular category sections (Project excluded, shown above) {%- endcomment -%}
   {% for major_name in ordered_major %}
     {% for major in major_groups %}
-      {% if major.name == major_name and major.name != "" %}
+      {% if major.name == major_name and major.name != "" and major.name != "Project" %}
         <section class="home-list-section">
           <header class="home-list-head">
             <h2>{{ major.name }}</h2>
@@ -22,19 +61,8 @@ layout: default
                   <p class="home-list-meta">
                     <span>{{ post.date | date: "%Y-%m-%d" }}</span>
                     <span class="dot">&middot;</span>
-                    <span class="metric">
-                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                        <circle cx="12" cy="12" r="2.8" stroke="currentColor" stroke-width="1.8"></circle>
-                      </svg>
-                      <span data-view-count data-post-url="{{ post.url }}">0</span>
-                    </span>
-                    <span class="metric">
-                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M12 20.5s-7-4.3-7-9.4C5 8.3 6.9 6.5 9.5 6.5c1.5 0 2.7.7 3.5 1.8.8-1.1 2-1.8 3.5-1.8 2.6 0 4.5 1.8 4.5 4.6 0 5.1-7 9.4-7 9.4z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                      </svg>
-                      <span data-reaction-count data-post-url="{{ post.url }}" data-post-slug="{{ post.slug }}">0</span>
-                    </span>
+                    <span class="metric">{{ eye_svg }}<span data-view-count data-post-url="{{ post.url }}">0</span></span>
+                    <span class="metric">{{ heart_svg }}<span data-reaction-count data-post-url="{{ post.url }}" data-post-slug="{{ post.slug }}">0</span></span>
                   </p>
                 </a>
               </li>
@@ -47,7 +75,7 @@ layout: default
 
   {% for major in major_groups %}
     {% unless ordered_major contains major.name %}
-      {% if major.name and major.name != "" %}
+      {% if major.name and major.name != "" and major.name != "Project" %}
         <section class="home-list-section">
           <header class="home-list-head">
             <h2>{{ major.name }}</h2>
@@ -61,19 +89,8 @@ layout: default
                   <p class="home-list-meta">
                     <span>{{ post.date | date: "%Y-%m-%d" }}</span>
                     <span class="dot">&middot;</span>
-                    <span class="metric">
-                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                        <circle cx="12" cy="12" r="2.8" stroke="currentColor" stroke-width="1.8"></circle>
-                      </svg>
-                      <span data-view-count data-post-url="{{ post.url }}">0</span>
-                    </span>
-                    <span class="metric">
-                      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M12 20.5s-7-4.3-7-9.4C5 8.3 6.9 6.5 9.5 6.5c1.5 0 2.7.7 3.5 1.8.8-1.1 2-1.8 3.5-1.8 2.6 0 4.5 1.8 4.5 4.6 0 5.1-7 9.4-7 9.4z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
-                      </svg>
-                      <span data-reaction-count data-post-url="{{ post.url }}" data-post-slug="{{ post.slug }}">0</span>
-                    </span>
+                    <span class="metric">{{ eye_svg }}<span data-view-count data-post-url="{{ post.url }}">0</span></span>
+                    <span class="metric">{{ heart_svg }}<span data-reaction-count data-post-url="{{ post.url }}" data-post-slug="{{ post.slug }}">0</span></span>
                   </p>
                 </a>
               </li>
@@ -83,4 +100,4 @@ layout: default
       {% endif %}
     {% endunless %}
   {% endfor %}
-</section>
+</div>
