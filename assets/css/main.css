@@ -1853,6 +1853,7 @@ html[data-theme="dark"] .theme-icon-sun {
 
 .home-list-item {
   position: relative;
+  min-width: 0;
 }
 
 .home-list-item::after {
@@ -1875,6 +1876,7 @@ html[data-theme="dark"] .theme-icon-sun {
   box-shadow: none !important;
   padding: 0 !important;
   margin-top: 0 !important;
+  min-width: 0;
 }
 
 #posts-list .post-card .card-link {
@@ -1962,6 +1964,7 @@ html[data-theme="dark"] .theme-icon-sun {
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   padding: 12px 14px;
+  min-width: 0;
   transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
@@ -2078,8 +2081,17 @@ html[data-theme="dark"] .theme-icon-sun {
     justify-content: space-between;
   }
 
+  .topbar-brand {
+    display: none;
+  }
+
   .menu-toggle {
     display: inline-flex;
+  }
+
+  /* On narrow screens show full titles (wrap) instead of truncating */
+  .home-list-title {
+    white-space: normal;
   }
 
   .sidebar {
