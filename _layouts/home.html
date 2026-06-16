@@ -18,7 +18,6 @@ layout: default
   {% if project_group %}
     <section class="projects-section">
       <header class="projects-head">
-        <span class="projects-eyebrow">PORTFOLIO</span>
         <h2>Projects</h2>
         {% if project_group.items.size > 4 %}
           <a class="projects-more" href="{{ '/projects/' | relative_url }}">전체 보기 ({{ project_group.items.size }}) &rarr;</a>

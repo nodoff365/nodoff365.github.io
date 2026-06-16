@@ -2054,16 +2054,6 @@ html[data-theme="dark"] .theme-icon-sun {
   margin-bottom: 14px;
 }
 
-.projects-eyebrow {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  color: var(--muted);
-  border: 1px solid var(--line-strong);
-  padding: 3px 9px;
-  border-radius: 999px;
-}
-
 .projects-head h2 {
   margin: 0;
   font-size: 1.55rem;
