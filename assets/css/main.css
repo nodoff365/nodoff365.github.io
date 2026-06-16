@@ -2259,51 +2259,81 @@ html[data-theme="dark"] .theme-icon-sun {
     grid-template-columns: 1fr;
   }
 
-  /* Smaller type on phones */
+  /* Less "boxed-in-box": drop the outer section panel, let cards breathe on the canvas */
+  .home-list-section,
+  .page-section {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+    margin-bottom: 28px;
+  }
+
+  .projects-section {
+    margin-bottom: 28px;
+  }
+
+  .home-list-head {
+    padding: 2px 0 10px;
+  }
+
+  .home-list-items {
+    gap: 9px;
+  }
+
+  .project-card {
+    padding: 14px 16px 14px 18px;
+  }
+
+  /* Smaller, calmer type on phones */
   .home-list-title {
-    font-size: 0.95rem;
+    font-size: 0.86rem;
   }
 
   .home-list-meta,
   .project-card-meta {
-    font-size: 0.8rem;
+    font-size: 0.73rem;
   }
 
   .home-list-head h2 {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
   }
 
   .projects-head h2 {
-    font-size: 1.3rem;
+    font-size: 1.18rem;
+  }
+
+  .projects-more {
+    font-size: 0.78rem;
   }
 
   .project-card-title {
-    font-size: 1.06rem;
+    font-size: 0.98rem;
   }
 
   .project-card-excerpt {
-    font-size: 0.86rem;
+    font-size: 0.8rem;
   }
 
   .post-header h1 {
-    font-size: 1.62rem;
+    font-size: 1.42rem;
   }
 
   .post-content {
-    font-size: 0.98rem;
-    line-height: 1.82;
+    font-size: 0.9rem;
+    line-height: 1.78;
   }
 
-  .post-content h1 { font-size: 1.55rem; }
-  .post-content h2 { font-size: 1.3rem; }
-  .post-content h3 { font-size: 1.12rem; }
+  .post-content h1 { font-size: 1.4rem; }
+  .post-content h2 { font-size: 1.2rem; }
+  .post-content h3 { font-size: 1.05rem; }
 
   .breadcrumb {
-    font-size: 0.84rem;
+    font-size: 0.8rem;
   }
 
   .post-article {
-    padding: 20px 18px;
+    padding: 18px 16px;
   }
 }
 
