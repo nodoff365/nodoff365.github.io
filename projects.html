@@ -1,0 +1,29 @@
+---
+layout: default
+title: Projects
+permalink: /projects/
+---
+
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="{{ '/' | relative_url }}">Home</a>
+  <span>&gt;</span>
+  <span class="current">Projects</span>
+</nav>
+
+<section class="projects-section projects-page">
+  <header class="projects-head">
+    <span class="projects-eyebrow">PORTFOLIO</span>
+    <h2>Projects</h2>
+  </header>
+
+  {% assign project_posts = site.posts | where_exp: "post", "post.categories[0] == 'Project'" | sort: "date" | reverse %}
+  {% if project_posts.size > 0 %}
+    <div class="projects-grid">
+      {% for post in project_posts %}
+        {% include project-card.html post=post %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="filter-empty">아직 등록된 프로젝트가 없습니다.</p>
+  {% endif %}
+</section>
