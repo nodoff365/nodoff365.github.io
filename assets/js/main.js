@@ -44,7 +44,9 @@
     updateGiscusTheme(theme);
   }
 
-  setTheme("dark");
+  // Theme is already applied by the inline script in head.html based on the
+  // saved preference (or the OS setting). Don't override it here; just keep
+  // the giscus comment theme in sync once the iframe is ready.
   syncGiscusThemeWhenReady();
 
   themeBtn?.addEventListener("click", () => {
