@@ -1,4 +1,5 @@
-{% assign total_posts = site.posts | size %}
+{% assign non_project_posts = site.posts | where_exp: "post", "post.categories[0] != 'Project'" %}
+{% assign total_posts = non_project_posts | size %}
 <aside id="sidebar" class="sidebar">
   <section class="sidebar-profile">
     <img
@@ -31,7 +32,7 @@
         <ul id="posts-tree" class="tree-children">
           {% assign major_groups = site.posts | group_by_exp: "post", "post.categories[0]" | sort: "name" %}
           {% for major in major_groups %}
-            {% if major.name and major.name != "" %}
+            {% if major.name and major.name != "" and major.name != "Project" %}
               <li class="tree-node major-node" data-major="{{ major.name | escape }}">
                 <div class="tree-item">
                   <a href="{{ '/posts/' | relative_url }}?major={{ major.name | url_encode }}" class="tree-link major-link" data-major="{{ major.name | escape }}">{{ major.name }} ({{ major.items | size }})</a>
