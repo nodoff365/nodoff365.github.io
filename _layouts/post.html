@@ -29,11 +29,18 @@ layout: default
         <div class="taxonomy-row">
           <strong>Categories</strong>
           <div class="taxonomy-chips">
-            {% if page.categories[0] %}
-              <a class="taxonomy-chip" href="{{ '/posts/?major=' | append: major_encoded | relative_url }}">{{ page.categories[0] }}</a>
-            {% endif %}
-            {% if page.categories[1] %}
-              <a class="taxonomy-chip" href="{{ '/posts/?minor=' | append: minor_encoded | relative_url }}">{{ page.categories[1] }}</a>
+            {% if page.categories[0] == 'Project' %}
+              <a class="taxonomy-chip" href="{{ '/projects/' | relative_url }}">{{ page.categories[0] }}</a>
+              {% if page.categories[1] %}
+                <a class="taxonomy-chip" href="{{ '/projects/' | relative_url }}">{{ page.categories[1] }}</a>
+              {% endif %}
+            {% else %}
+              {% if page.categories[0] %}
+                <a class="taxonomy-chip" href="{{ '/posts/?major=' | append: major_encoded | relative_url }}">{{ page.categories[0] }}</a>
+              {% endif %}
+              {% if page.categories[1] %}
+                <a class="taxonomy-chip" href="{{ '/posts/?minor=' | append: minor_encoded | relative_url }}">{{ page.categories[1] }}</a>
+              {% endif %}
             {% endif %}
           </div>
         </div>
