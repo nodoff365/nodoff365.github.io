@@ -1381,11 +1381,12 @@ html[data-theme="dark"] .theme-icon-sun {
 }
 
 .post-content th {
-  background: color-mix(in srgb, var(--surface) 84%, var(--text) 16%);
+  background: color-mix(in srgb, var(--surface) 80%, var(--text) 20%);
+  font-weight: 700;
 }
 
-.post-content tbody tr:nth-child(2n) {
-  background: color-mix(in srgb, var(--surface) 92%, var(--text) 8%);
+.post-content tbody tr:hover {
+  background: color-mix(in srgb, var(--surface) 95%, var(--text) 5%);
 }
 
 .post-content details {
