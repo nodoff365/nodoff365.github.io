@@ -10,6 +10,7 @@
   --topbar-h: 66px;
   --sidebar-w: 264px;
   --toc-w: 220px;
+  --content-max: 1100px;
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
@@ -510,7 +511,7 @@ html[data-theme="dark"] .theme-icon-sun {
 .main-content > .breadcrumb,
 .main-content > .site-footer {
   width: 100%;
-  max-width: 880px;
+  max-width: var(--content-max);
   margin-left: auto;
   margin-right: auto;
 }
@@ -931,11 +932,10 @@ html[data-theme="dark"] .theme-icon-sun {
 
 .post-layout {
   display: grid;
-  grid-template-columns: minmax(0, 760px) minmax(190px, 230px);
-  gap: 60px;
-  justify-content: center;
+  grid-template-columns: minmax(0, 1fr) var(--toc-w);
+  gap: 48px;
   align-items: start;
-  max-width: 1120px;
+  max-width: var(--content-max);
   margin: 0 auto;
 }
 
@@ -2078,7 +2078,7 @@ html[data-theme="dark"] .theme-icon-sun {
 /* Dedicated /projects/ page: center like other content */
 .main-content > .projects-page {
   width: 100%;
-  max-width: 880px;
+  max-width: var(--content-max);
   margin-left: auto;
   margin-right: auto;
 }
