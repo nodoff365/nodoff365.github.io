@@ -328,17 +328,19 @@ a {
 
 .sidebar-profile {
   margin-bottom: 18px;
-  padding: 0 6px 18px;
+  padding: 4px 6px 18px;
   border-bottom: 1px solid var(--line);
+  text-align: left;
 }
 
 .sidebar-avatar {
-  width: 84px;
-  height: 84px;
+  width: 104px;
+  height: 104px;
   border-radius: 50%;
   border: 1px solid var(--line);
   box-shadow: var(--shadow-sm);
   display: block;
+  margin: 0 auto;
 }
 
 .sidebar-title {
