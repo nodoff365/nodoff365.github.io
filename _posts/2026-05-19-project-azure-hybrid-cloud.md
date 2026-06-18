@@ -1,5 +1,5 @@
 ---
-title: "Azure 하이브리드 클라우드 인프라 구축 — Hub-Spoke · 다중 리전 DR · IPsec VPN"
+title: "Azure 하이브리드 클라우드 인프라 구축"
 date: 2026-05-19 00:00:00 +0900
 categories: [Project, Azure]
 tags: [azure, terraform, hub-spoke, ipsec-vpn, disaster-recovery, waf, redis, iac]
