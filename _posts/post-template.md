@@ -1,12 +1,13 @@
 ---
 title: ""
-date: YYYY-MM-DD HH:MM:SS +0900
+date: 2026-00-00 00:00:00 +0900
 categories: [대분류, 중분류]
 tags: []
 ---
 
-요약을 여기에 작성하세요.
-
-## 본문 제목
-
-본문 내용을 작성하세요.
+---
+title: "내 프로젝트 제목"
+date: 2026-00-00 00:00:00 +0900
+categories: [Project, Azure]
+tags: [Azure]
+---
