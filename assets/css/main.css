@@ -326,6 +326,10 @@ a {
   padding: 22px 16px 80px;
 }
 
+.sidebar-edge {
+  display: none;
+}
+
 .sidebar-profile {
   margin-bottom: 18px;
   padding: 4px 6px 18px;
@@ -2163,6 +2167,73 @@ html[data-theme="dark"] .theme-icon-sun {
   padding: 2px 9px;
 }
 
+/* When space is tight (narrow window or zoom-in), auto-hide the sidebar */
+@media (max-width: 1280px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
+    z-index: 950;
+  }
+
+  body.sidebar-open .sidebar {
+    transform: translateX(0);
+  }
+
+  body.sidebar-open .sidebar-overlay {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+/* Touch devices: use the hamburger drawer (no hover to reveal) */
+@media (hover: none) and (max-width: 1280px) {
+  .menu-toggle {
+    display: inline-flex;
+  }
+}
+
+/* Mouse devices: taskbar-style auto-hide — reveal on left-edge hover, no hamburger */
+@media (hover: hover) and (max-width: 1280px) {
+  .sidebar-edge {
+    display: block;
+    position: fixed;
+    left: 0;
+    top: var(--topbar-h);
+    bottom: 0;
+    width: 14px;
+    z-index: 949;
+  }
+
+  .sidebar-edge::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 56px;
+    border-radius: 0 6px 6px 0;
+    background: var(--line-strong);
+    opacity: 0.7;
+    transition: opacity 0.15s ease, height 0.15s ease;
+  }
+
+  .sidebar-edge:hover::after {
+    opacity: 1;
+    height: 80px;
+  }
+
+  .sidebar-edge:hover ~ .sidebar,
+  .sidebar:hover {
+    transform: translateX(0);
+    box-shadow: var(--shadow-md);
+  }
+}
+
 @media (max-width: 1100px) {
   .home-dashboard {
     grid-template-columns: 1fr;
@@ -2198,16 +2269,8 @@ html[data-theme="dark"] .theme-icon-sun {
 }
 
 @media (max-width: 860px) {
-  .topbar {
-    justify-content: space-between;
-  }
-
   .topbar-brand {
     display: none;
-  }
-
-  .menu-toggle {
-    display: inline-flex;
   }
 
   /* On narrow screens show full titles (wrap) instead of truncating */
@@ -2215,23 +2278,7 @@ html[data-theme="dark"] .theme-icon-sun {
     white-space: normal;
   }
 
-  .sidebar {
-    transform: translateX(-100%);
-    transition: transform 0.2s ease;
-    z-index: 950;
-  }
-
-  body.sidebar-open .sidebar {
-    transform: translateX(0);
-  }
-
-  body.sidebar-open .sidebar-overlay {
-    opacity: 1;
-    visibility: visible;
-  }
-
   .main-content {
-    margin-left: 0;
     padding: 16px;
   }
 
