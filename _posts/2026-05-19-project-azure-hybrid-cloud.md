@@ -116,7 +116,7 @@ Application Gateway를 WAF_v2 SKU로 구성하고 OWASP 3.2 룰셋을 **Preventi
 | Storage (File) | privatelink.file.core.windows.net |
 | Managed Redis | privatelink.redis.azure.net |
 
-> **Redis DNS Zone 주의** — 신형 Azure Managed Redis는 `privatelink.redis.azure.net` 영역을 사용합니다. 구형 Azure Cache for Redis용 `privatelink.redis.cache.windows.net`을 쓰면 PE 격리가 동작하지 않고 공인 IP가 반환되므로 반드시 구분해야 합니다. 실제로 이 부분에서 한 번 막혀, DNS Zone을 신형으로 교체한 뒤에야 사설 IP가 정상 반환됐습니다.
+> **Redis DNS Zone 주의** — 신형 Azure Managed Redis는 `privatelink.redis.azure.net` 영역을 사용합니다. 구형 Azure Cache for Redis용 `privatelink.redis.cache.windows.net`을 쓰면 PE 격리가 동작하지 않고 공인 IP가 반환되므로 반드시 구분해야 합니다.
 
 <br>
 
@@ -128,21 +128,34 @@ Application Gateway를 WAF_v2 SKU로 구성하고 OWASP 3.2 룰셋을 **Preventi
 
 양 리전의 VPN Gateway(VpnGw1AZ, RouteBased)와 온프레미스 Bluemax NGF 100 방화벽 사이에 Site-to-Site IPsec 터널을 수립했습니다. 핵심은 양 끝단의 IPsec/IKE 정책을 정확히 일치시키는 것입니다 — 하나라도 어긋나면 터널이 성립하지 않습니다.
 
+온프레미스 Bluemax NGF 100의 지점 연결(고급 설정) 값은 다음과 같으며, Azure VPN Gateway 측 IPsec 정책과 동일하게 맞췄습니다.
+
 | 파라미터 | 값 |
 |----------|-----|
-| IKE / IPsec 암호화 | AES256 |
-| IKE / IPsec 무결성 | SHA256 |
-| DH / PFS Group | DHGroup14 / None |
-| SA Lifetime | 27000초 |
-| 모드 / 프로토콜 | IKEv2 / ESP-Tunnel |
+| 연결 모드 | IKEv2 |
+| 보안 정책 (암호화 / 무결성 / DH) | AES-256 / SHA-256 / DHGroup14 |
+| 동작 모드 | ESP-Tunnel |
+| IKE SA 수명 | 28800초 |
+| IPSec SA 수명 | 27000초 |
+| IKE 포트 | UDP 500 |
+| PFS | None |
+| UDP Encapsulation | 미적용(OFF) |
+| 표준 IPSec | 적용(ON) |
+| 보안 연결 동작 방식 | Active |
+| 확장 모드 | ON |
+| 센터(원격) 구분 | 외부망 |
 
 > **NAT 제외** — VPN 터널 트래픽 구간에는 NAT를 적용하지 않았습니다. 해당 구간은 IPsec이 처리하므로 SNAT/DNAT가 개입하면 응답 패킷이 디폴트 게이트웨이로 유출되어 터널이 끊깁니다. 또한 VpnGw1은 deprecated되어 가용 영역을 지원하는 VpnGw1AZ SKU를 채택했습니다.
 
-![Central VPN 지점 연결 고급 설정](/assets/images/project/azure-hybrid-cloud/vpn-ipsec-central.png)
-_Bluemax 지점 연결 — IKEv2 · AES-256 · SHA-256 · Group14 · ESP-Tunnel_
+방화벽 보안 정책은 화이트리스트 방식으로 구성했습니다. 웹 서버 ↔ MySQL 통신만 허용하고, 그 외 MySQL 접근과 전체 트래픽은 기본 차단합니다.
 
-![Bluemax 방화벽 보안 정책](/assets/images/project/azure-hybrid-cloud/bluemax-policy.png)
-_Bluemax 화이트리스트 보안 정책 (VPN 구간 NAT 미적용)_
+| 출발지 | 목적지 | 서비스 | 동작 |
+|--------|--------|--------|------|
+| 10.1.0.0/16 (Azure 웹) | 10.10.34.119 (MySQL) | MySQL | 허용 |
+| 10.10.34.119 | 10.1.0.0/16 | MySQL | 허용 |
+| Any | 10.10.34.119 | MySQL | 거부 |
+| 10.10.34.0/24 | Any | Any | 허용 |
+| Any | Any | Any | 거부 (기본) |
 
 <br>
 
@@ -251,4 +264,4 @@ _nslookup → privatelink.redis.azure.net 사설 IP 반환_
 
 ## 마무리
 
-단일 리전에서 시작해 다중 리전 DR과 하이브리드 연동까지 단계적으로 쌓아 올리면서, 각 단계의 설계 의도를 검증으로 증빙하는 데 집중했습니다. 특히 비대칭 라우팅 회피, Redis 신형/구형 DNS Zone 구분, 스토리지 계정 분리처럼 "동작 방식을 먼저 확인하지 않으면 막히는" 지점들을 직접 부딪히며 정리한 점이 가장 큰 수확이었습니다.
+단일 리전에서 다중 리전 DR · 하이브리드 연동까지 확장했고, 배포 결과를 보안 · 네트워크 · 고가용성 · 하이브리드 · 캐시 · 재해복구 · 공유 스토리지 · 모니터링 8개 영역에서 검증했습니다.
