@@ -1,0 +1,70 @@
+diff --git a/assets/css/main.css b/assets/css/main.css
+index 143cc7a..3b6e704 100644
+--- a/assets/css/main.css
++++ b/assets/css/main.css
+@@ -78,7 +78,8 @@ html[data-theme="dark"] {
+ body {
+   margin: 0;
+   font-family: var(--font-sans);
+-  font-feature-settings: "cv11", "ss01";
++  /* cv08: serif uppercase I (distinct from lowercase l / pipe) */
++  font-feature-settings: "cv08" 1;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale;
+   letter-spacing: -0.011em;
+diff --git a/assets/js/main.js b/assets/js/main.js
+index 8a4db0b..f18f719 100644
+--- a/assets/js/main.js
++++ b/assets/js/main.js
+@@ -523,6 +523,34 @@
+     });
+   }
+ 
++  // Indent the body content of a section to line up under its (indented) heading.
++  function autoIndentSectionContent() {
++    if (!postContent) return;
++    const kids = Array.from(postContent.children);
++    const isHeading = (el) => /^H[1-6]$/.test(el.tagName);
++    let currentIndent = "";
++    let wrapper = null;
++
++    kids.forEach((el) => {
++      if (isHeading(el)) {
++        wrapper = null;
++        currentIndent = el.style.marginLeft || "";
++        return;
++      }
++      if (currentIndent) {
++        if (!wrapper) {
++          wrapper = document.createElement("div");
++          wrapper.className = "section-indent";
++          wrapper.style.marginLeft = currentIndent;
++          el.parentNode.insertBefore(wrapper, el);
++        }
++        wrapper.appendChild(el);
++      } else {
++        wrapper = null;
++      }
++    });
++  }
++
+   function autoIndentEmptyBullets() {
+     if (!postContent) return;
+     const lists = Array.from(postContent.querySelectorAll("ul, ol"));
+@@ -679,7 +707,7 @@
+     function isAllowedTarget(target) {
+       if (!(target instanceof Element)) return false;
+       return !!target.closest(
+-        "pre, code, .code-copy-btn, input, textarea, select, [contenteditable='true'], iframe.giscus-frame, .giscus, .comments"
++        "a[href], pre, code, .code-copy-btn, input, textarea, select, [contenteditable='true'], iframe.giscus-frame, .giscus, .comments"
+       );
+     }
+ 
+@@ -831,6 +859,7 @@
+   autoFixListFollowBlocks();
+   autoIndentNumberedHeadings();
+   autoIndentByHeadingLevel();
++  autoIndentSectionContent();
+   autoIndentEmptyBullets();
+   attachCodeCopyButtons();
+   initScrollJumpButton();

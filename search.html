@@ -1,0 +1,18 @@
+---
+layout: default
+title: Search
+permalink: /search/
+---
+
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a href="{{ '/' | relative_url }}">Home</a>
+  <span>&gt;</span>
+  <span class="current">Search</span>
+</nav>
+
+<section class="page-section">
+  <p id="search-page-count" class="filter-label"></p>
+  <p id="search-page-empty" class="filter-empty" hidden>No posts found.</p>
+  <div id="search-page-results" class="card-grid"></div>
+  <nav id="search-page-pagination" class="pagination" aria-label="Search results pagination"></nav>
+</section>

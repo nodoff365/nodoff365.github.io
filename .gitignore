@@ -1,0 +1,4 @@
+_site/
+.jekyll-cache/
+_posts/_site/
+_posts/.jekyll-cache/

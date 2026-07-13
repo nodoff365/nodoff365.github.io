@@ -1,0 +1,154 @@
+---
+layout: default
+---
+
+<div class="post-layout">
+  <article class="post-article">
+    {% include breadcrumb.html %}
+    <header class="post-header">
+      <h1>{{ page.title }}</h1>
+      <p class="post-meta">
+        <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y-%m-%d" }}</time>
+        <span>&middot;</span>
+        <span>{{ page.author | default: site.author.name }}</span>
+        <span>&middot;</span>
+        <span data-reaction-count data-post-url="{{ page.url }}" data-post-slug="{{ page.slug }}">Likes 0</span>
+        <span>&middot;</span>
+        <span data-view-count data-post-url="{{ page.url }}">Views 0</span>
+      </p>
+    </header>
+
+    <div class="post-content">
+      {{ content }}
+    </div>
+
+    <footer class="post-taxonomy">
+      {% if page.categories and page.categories.size > 0 %}
+        {% assign major_encoded = page.categories[0] | url_encode %}
+        {% assign minor_encoded = page.categories[1] | url_encode %}
+        <div class="taxonomy-row">
+          <strong>Categories</strong>
+          <div class="taxonomy-chips">
+            {% if page.categories[0] == 'Project' %}
+              <a class="taxonomy-chip" href="{{ '/projects/' | relative_url }}">{{ page.categories[0] }}</a>
+              {% if page.categories[1] %}
+                <a class="taxonomy-chip" href="{{ '/projects/' | relative_url }}">{{ page.categories[1] }}</a>
+              {% endif %}
+            {% else %}
+              {% if page.categories[0] %}
+                <a class="taxonomy-chip" href="{{ '/posts/?major=' | append: major_encoded | relative_url }}">{{ page.categories[0] }}</a>
+              {% endif %}
+              {% if page.categories[1] %}
+                <a class="taxonomy-chip" href="{{ '/posts/?minor=' | append: minor_encoded | relative_url }}">{{ page.categories[1] }}</a>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if page.tags and page.tags.size > 0 %}
+        <div class="taxonomy-row">
+          <strong>Tags</strong>
+          <div class="taxonomy-chips">
+            {% for tag in page.tags %}
+              {% assign tag_encoded = tag | url_encode %}
+              <a class="taxonomy-chip" href="{{ '/posts/?tag=' | append: tag_encoded | relative_url }}">#{{ tag }}</a>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    </footer>
+
+    {% assign major_current = page.categories.first | default: "" %}
+    {% assign minor_current = page.categories.last | default: "" %}
+
+    {% assign has_minor_scope = false %}
+    {% for post in site.posts %}
+      {% if post.categories.first == major_current and post.categories.last == minor_current %}
+        {% assign has_minor_scope = true %}
+      {% endif %}
+    {% endfor %}
+
+    {% assign nav_scope_type = "minor" %}
+    {% if has_minor_scope == false %}
+      {% assign has_major_scope = false %}
+      {% for post in site.posts %}
+        {% if post.categories.first == major_current %}
+          {% assign has_major_scope = true %}
+        {% endif %}
+      {% endfor %}
+      {% if has_major_scope %}
+        {% assign nav_scope_type = "major" %}
+      {% else %}
+        {% assign nav_scope_type = "all" %}
+      {% endif %}
+    {% endif %}
+
+    {% assign prev_post = nil %}
+    {% assign next_post = nil %}
+    {% assign found_current = false %}
+
+    {% for post in site.posts %}
+      {% assign in_scope = false %}
+      {% if nav_scope_type == "minor" %}
+        {% if post.categories.first == major_current and post.categories.last == minor_current %}
+          {% assign in_scope = true %}
+        {% endif %}
+      {% elsif nav_scope_type == "major" %}
+        {% if post.categories.first == major_current %}
+          {% assign in_scope = true %}
+        {% endif %}
+      {% else %}
+        {% assign in_scope = true %}
+      {% endif %}
+
+      {% if in_scope %}
+        {% if post.url == page.url %}
+          {% assign found_current = true %}
+        {% elsif found_current and next_post == nil %}
+          {% assign next_post = post %}
+        {% elsif found_current == false %}
+          {% assign prev_post = post %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    <nav class="post-neighbors" aria-label="Post navigation">
+      <div class="post-neighbor prev">
+        {% if prev_post %}
+          <a href="{{ prev_post.url | relative_url }}" class="post-neighbor-link">
+            <small>Previous</small>
+            <strong class="post-neighbor-title">{{ prev_post.title }}</strong>
+          </a>
+        {% else %}
+          <div class="post-neighbor-link is-empty">
+            <small>Previous</small>
+            <strong class="post-neighbor-title">No previous post</strong>
+          </div>
+        {% endif %}
+      </div>
+      <div class="post-neighbor next">
+        {% if next_post %}
+          <a href="{{ next_post.url | relative_url }}" class="post-neighbor-link">
+            <small>Next</small>
+            <strong class="post-neighbor-title">{{ next_post.title }}</strong>
+          </a>
+        {% else %}
+          <div class="post-neighbor-link is-empty">
+            <small>Next</small>
+            <strong class="post-neighbor-title">No next post</strong>
+          </div>
+        {% endif %}
+      </div>
+    </nav>
+
+    {% include comments.html %}
+  </article>
+
+  <aside id="toc-container" class="toc-container">
+    <h2>TOC</h2>
+    <nav id="toc"></nav>
+  </aside>
+</div>
+
+{% include post-jsonld.html %}
