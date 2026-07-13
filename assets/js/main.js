@@ -523,6 +523,34 @@
     });
   }
 
+  // Indent the body content of a section to line up under its (indented) heading.
+  function autoIndentSectionContent() {
+    if (!postContent) return;
+    const kids = Array.from(postContent.children);
+    const isHeading = (el) => /^H[1-6]$/.test(el.tagName);
+    let currentIndent = "";
+    let wrapper = null;
+
+    kids.forEach((el) => {
+      if (isHeading(el)) {
+        wrapper = null;
+        currentIndent = el.style.marginLeft || "";
+        return;
+      }
+      if (currentIndent) {
+        if (!wrapper) {
+          wrapper = document.createElement("div");
+          wrapper.className = "section-indent";
+          wrapper.style.marginLeft = currentIndent;
+          el.parentNode.insertBefore(wrapper, el);
+        }
+        wrapper.appendChild(el);
+      } else {
+        wrapper = null;
+      }
+    });
+  }
+
   function autoIndentEmptyBullets() {
     if (!postContent) return;
     const lists = Array.from(postContent.querySelectorAll("ul, ol"));
@@ -679,7 +707,7 @@
     function isAllowedTarget(target) {
       if (!(target instanceof Element)) return false;
       return !!target.closest(
-        "pre, code, .code-copy-btn, input, textarea, select, [contenteditable='true'], iframe.giscus-frame, .giscus, .comments"
+        "a[href], pre, code, .code-copy-btn, input, textarea, select, [contenteditable='true'], iframe.giscus-frame, .giscus, .comments"
       );
     }
 
@@ -831,6 +859,7 @@
   autoFixListFollowBlocks();
   autoIndentNumberedHeadings();
   autoIndentByHeadingLevel();
+  autoIndentSectionContent();
   autoIndentEmptyBullets();
   attachCodeCopyButtons();
   initScrollJumpButton();

@@ -78,7 +78,8 @@ html[data-theme="dark"] {
 body {
   margin: 0;
   font-family: var(--font-sans);
-  font-feature-settings: "cv11", "ss01";
+  /* cv08: serif uppercase I (distinct from lowercase l / pipe) */
+  font-feature-settings: "cv08" 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: -0.011em;
