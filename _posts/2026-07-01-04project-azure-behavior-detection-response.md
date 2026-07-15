@@ -1,0 +1,152 @@
+---
+title: "Azure 클라우드 행위기반 보안탐지 및 대응"
+date: 2026-07-01 00:00:00 +0900
+categories: [Project, Azure]
+tags: [azure, sentinel, kql, soar, logic-apps, ama, dcr, log-analytics, threat-detection]
+---
+
+## 1. 개요
+
+Azure 환경에서 발생하는 공격 **행위를 로그 기반으로 탐지하고 자동 대응**하는 체계를 구축한 프로젝트입니다. 인터넷에 노출된 웹 서비스와 내부 데이터베이스로 구성된 환경에서, 외부 공격자가 웹 서버를 거점으로 내부 DB에 침투해 개인정보를 유출하는 **킬체인**을 대상으로 삼았습니다.
+
+공격의 각 단계가 로그로 수집되고 → Microsoft Sentinel 분석 규칙(KQL)으로 탐지되어 인시던트화되며 → 최종적으로 SOAR(Playbook)로 자동 대응되는 전 과정을 설계·구현·검증했습니다. 로그 수집(AMA·DCR), 분석 규칙(KQL), 인시던트 조사, 자동 대응(Playbook)의 계층으로 구성됩니다.
+
+> 실습 환경은 Terraform(IaC)으로 반복 배포되어 공인 IP는 배포 시마다 재할당됩니다. 사설 IP(Web 10.0.3.4, DB 10.0.5.4)는 고정이며, 탐지·대응 로직은 IP 값과 무관하게 동일하게 동작합니다.
+
+**기술 스택**
+
+`Microsoft Sentinel` · `Log Analytics (team602-law)` · `Azure Monitor Agent(AMA) · DCR` · `KQL` · `Logic Apps (SOAR Playbook)` · `Defender for Cloud` · `VNet Flow Log`
+
+**기간** 2026.6.9 ~ 7.1
+
+![전체 구성도](https://nodoff365.github.io/assets/images/Project/azure-behavior-detection-response/architecture.png)
+_로그 수집 → 탐지 → 인시던트 → SOAR 자동 대응 전체 구성_
+
+<br>
+
+---
+
+<br>
+
+## 2. 로그 수집 체계 (AMA · DCR)
+
+공격 행위를 탐지하려면 먼저 모든 관련 로그를 중앙에 수집해야 합니다. 각 VM의 시스템 로그와 데이터베이스 감사 로그를 Azure Monitor Agent(AMA)로 수집하고 DCR(데이터 수집 규칙)로 Log Analytics(team602-law)에 전달했습니다.
+
+![Syslog 수집](https://nodoff365.github.io/assets/images/Project/azure-behavior-detection-response/log-syslog.png)
+_전체 Syslog 수집_
+
+![SSH 인증 로그](https://nodoff365.github.io/assets/images/Project/azure-behavior-detection-response/log-ssh-auth.png)
+_SSH 인증 로그 수집_
+
+![MariaDB 감사 로그](https://nodoff365.github.io/assets/images/Project/azure-behavior-detection-response/log-mariadb-audit.png)
+_MariaDB 감사 로그 수집_
+
+여기에 Defender for Cloud의 보안 경고·권장사항을 **연속 내보내기**로 Log Analytics에 연동해, OS·DB 로그와 Defender 로그를 한 워크스페이스에서 상관 분석할 수 있게 했습니다.
+
+![Defender 연속 내보내기](https://nodoff365.github.io/assets/images/Project/azure-behavior-detection-response/continuous-export.png)
+_Defender 보안 데이터 연속 내보내기 설정_
+
+<br>
+
+---
+
+<br>
+
+## 3. 탐지 규칙 (Sentinel 분석 규칙 · KQL)
+
+수집된 로그를 대상으로 킬체인 단계별 분석 규칙을 KQL로 작성해 배포했습니다. 각 규칙은 특정 공격 행위 패턴을 탐지해 경고를 생성합니다.
+
+![탐지 규칙 배포 목록](https://nodoff365.github.io/assets/images/Project/azure-behavior-detection-response/rules-deployed.png)
+_배포된 분석 규칙 목록_
+
+각 규칙이 실제 공격 행위를 탐지하는지 시나리오별로 확인했습니다.
+
+![포트 스캔 탐지](https://nodoff365.github.io/assets/images/Project/azure-behavior-detection-response/detect-portscan.png)
+_포트 스캔 탐지_
+
+![SSH 무차별 대입 탐지](https://nodoff365.github.io/assets/images/Project/azure-behavior-detection-response/detect-ssh.png)
+_SSH 무차별 대입 탐지_
+
+![SSH 공격자 IP 집계](https://nodoff365.github.io/assets/images/Project/azure-behavior-detection-response/detect-ssh-attacker-ip.png)
+_SSH 공격 출발지 IP 집계_
+
+![root 접근 실패 탐지](https://nodoff365.github.io/assets/images/Project/azure-behavior-detection-response/detect-root-fail.png)
+_root 접근 실패 탐지_
+
+![민감정보 조회 탐지](https://nodoff365.github.io/assets/images/Project/azure-behavior-detection-response/detect-sensitive-query.png)
+_DB 민감정보 조회 탐지_
+
+![권한 변경 시도 탐지](https://nodoff365.github.io/assets/images/Project/azure-behavior-detection-response/detect-privesc.png)
+_권한 변경(권한 상승) 시도 탐지_
+
+<br>
+
+---
+
+<br>
+
+## 4. 공격 시나리오 탐지 검증 (mysqldump 데이터 유출)
+
+킬체인의 최종 단계인 데이터 유출을 재현했습니다. 공격자가 `mysqldump`로 DB를 통째로 덤프하는 시도를 수행하자, 해당 행위가 분석 규칙에 의해 탐지됩니다.
+
+![mysqldump 공격 시도](https://nodoff365.github.io/assets/images/Project/azure-behavior-detection-response/mysqldump-attack.png)
+_mysqldump로 DB 덤프 시도 (데이터 유출 공격)_
+
+![mysqldump 탐지](https://nodoff365.github.io/assets/images/Project/azure-behavior-detection-response/mysqldump-detect.png)
+_mysqldump 행위 탐지_
+
+<br>
+
+---
+
+<br>
+
+## 5. 인시던트 조사
+
+탐지된 경고는 Sentinel에서 인시던트로 집계되어, 조사·대응의 단위가 됩니다.
+
+![인시던트 목록](https://nodoff365.github.io/assets/images/Project/azure-behavior-detection-response/incident-list.png)
+_탐지 경고가 인시던트로 집계됨_
+
+<br>
+
+---
+
+<br>
+
+## 6. SOAR 자동 대응 (Playbook)
+
+탐지에서 그치지 않고, Logic Apps 기반 SOAR Playbook으로 자동 대응까지 연결했습니다. 인시던트가 트리거되면 Playbook이 실행되어, 공격 인시던트의 엔터티에서 공격자 IP를 추출하고 해당 IP를 NSG 규칙에 자동으로 추가해 차단합니다.
+
+![Logic App 개요](https://nodoff365.github.io/assets/images/Project/azure-behavior-detection-response/soar-logicapp.png)
+_SOAR Playbook (Logic App) 개요_
+
+![디자이너 흐름](https://nodoff365.github.io/assets/images/Project/azure-behavior-detection-response/soar-designer.png)
+_Playbook 디자이너 흐름_
+
+![엔터티 IP 추출](https://nodoff365.github.io/assets/images/Project/azure-behavior-detection-response/soar-entity-ip.png)
+_인시던트 엔터티에서 공격자 IP 추출 (For each)_
+
+Playbook을 실행하자 정상적으로 완료되고, 공격자 IP가 NSG에 차단 규칙으로 자동 추가됨을 확인했습니다.
+
+![SOAR 실행 성공](https://nodoff365.github.io/assets/images/Project/azure-behavior-detection-response/soar-run-success.png)
+_Playbook 실행 성공_
+
+![NSG 자동 차단](https://nodoff365.github.io/assets/images/Project/azure-behavior-detection-response/soar-nsg-block.png)
+_공격자 IP가 team602-web-nsg에 자동 차단 규칙으로 추가_
+
+<br>
+
+---
+
+<br>
+
+## 7. 결론
+
+OS·DB·네트워크 로그와 Defender 로그를 Log Analytics로 중앙 수집하고, Sentinel 분석 규칙(KQL)으로 포트 스캔·SSH 무차별 대입·권한 변경·민감정보 조회·데이터 유출 등 킬체인 단계별 공격을 탐지했습니다. 탐지된 인시던트는 SOAR Playbook으로 연결해 공격자 IP를 NSG에 자동 차단함으로써, **탐지 → 인시던트 → 대응** 전 과정을 자동화·검증했습니다.
+
+**한계 및 개선 방향**
+
+- **오탐(False Positive) 튜닝** — 실제 운영에서는 정상 행위와의 구분을 위한 임계값·화이트리스트 튜닝이 필요
+- **자동 차단의 위험** — SOAR 자동 NSG 차단은 오탐 시 정상 IP를 막을 수 있어, 승인 단계(HITL) 병행 고려
+- **탐지 커버리지 확대** — MITRE ATT&CK 기반으로 미탐 구간을 점검·보강
