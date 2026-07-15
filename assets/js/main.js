@@ -38,15 +38,25 @@
     }, 200);
   }
 
+  function updateThemeToggleLabel(theme) {
+    if (!themeBtn) return;
+    // Show the action (what a click will switch TO), not the current state.
+    const label = theme === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환";
+    themeBtn.setAttribute("title", label);
+    themeBtn.setAttribute("aria-label", label);
+  }
+
   function setTheme(theme) {
     root.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
     updateGiscusTheme(theme);
+    updateThemeToggleLabel(theme);
   }
 
   // Theme is already applied by the inline script in head.html based on the
   // saved preference (or the OS setting). Don't override it here; just keep
   // the giscus comment theme in sync once the iframe is ready.
+  updateThemeToggleLabel(root.getAttribute("data-theme") || "light");
   syncGiscusThemeWhenReady();
 
   themeBtn?.addEventListener("click", () => {

@@ -1190,6 +1190,12 @@ html[data-theme="dark"] .theme-icon-sun {
   color: var(--code-inline-fg);
 }
 
+/* kramdown tags inline code with .highlighter-rouge (a block color rule);
+   keep inline code readable (esp. in light mode) */
+.post-content :not(pre) > code.highlighter-rouge {
+  color: var(--code-inline-fg);
+}
+
 .post-content pre {
   overflow-x: hidden;
   white-space: pre-wrap;
