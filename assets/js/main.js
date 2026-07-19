@@ -757,10 +757,6 @@
       if (shouldBlock(e.target)) e.preventDefault();
     }, true);
 
-    document.addEventListener("touchstart", (e) => {
-      if (shouldBlock(e.target)) e.preventDefault();
-    }, { capture: true, passive: false });
-
     document.addEventListener("keydown", (e) => {
       if (!shouldBlock(e.target)) return;
       const ctrlOrMeta = e.ctrlKey || e.metaKey;
