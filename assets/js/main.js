@@ -99,6 +99,24 @@
       .toLowerCase();
   }
 
+  // Home: Posts 피드 카테고리 칩 필터 (그 자리에서 필터, 페이지 이동 없음)
+  const homeFeed = document.getElementById("home-feed");
+  if (homeFeed) {
+    const homeChips = Array.from(document.querySelectorAll(".home-filter-chips .tag-chip"));
+    const homeItems = Array.from(homeFeed.querySelectorAll(".home-list-item"));
+    homeChips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        homeChips.forEach((c) => c.classList.remove("active"));
+        chip.classList.add("active");
+        const needle = normalizeFilterValue(chip.dataset.filter || "");
+        homeItems.forEach((item) => {
+          const major = normalizeFilterValue(item.dataset.major || "");
+          item.hidden = needle && major !== needle;
+        });
+      });
+    });
+  }
+
   if (majorParam) {
     const postsNode = document.querySelector(".posts-node");
     postsNode?.classList.add("open");

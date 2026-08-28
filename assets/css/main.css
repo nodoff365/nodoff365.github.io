@@ -2394,3 +2394,33 @@ html[data-theme="dark"] .theme-icon-sun {
   }
 }
 
+
+/* ── Home: Posts 피드 필터 칩 + 행 카테고리 라벨 ── */
+.home-filter-chips {
+  margin: 2px 0 16px;
+}
+
+.home-feed-titlerow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  margin-bottom: 6px;
+}
+
+.home-feed-titlerow .home-list-title {
+  margin: 0;
+  min-width: 0;
+}
+
+.home-feed-cat {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  line-height: 1.6;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 1px 6px;
+  white-space: nowrap;
+}
