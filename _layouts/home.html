@@ -39,6 +39,9 @@ layout: default
     <section class="home-list-section">
       <header class="home-list-head">
         <h2>Posts</h2>
+      </header>
+
+      <div class="home-feed-box">
         <div class="tag-chip-list home-filter-chips" role="group" aria-label="카테고리 필터">
           <button type="button" class="tag-chip active" data-filter="">전체</button>
           {% if manual_order and manual_order != empty %}
@@ -51,9 +54,8 @@ layout: default
             {% endfor %}
           {% endif %}
         </div>
-      </header>
 
-      <ul class="home-list-items" id="home-feed">
+        <ul class="home-list-items" id="home-feed">
         {% for post in feed_posts %}
           <li class="home-list-item"
               data-major="{{ post.categories[0] | default: '' | escape }}"
@@ -73,7 +75,8 @@ layout: default
             </a>
           </li>
         {% endfor %}
-      </ul>
+        </ul>
+      </div>
     </section>
   {% endif %}
 
