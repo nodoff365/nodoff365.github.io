@@ -17,6 +17,16 @@
   --nav-pill-bg: rgba(24, 24, 27, 0.06);
   --shadow-sm: 0 1px 2px rgba(24, 24, 27, 0.05), 0 1px 3px rgba(24, 24, 27, 0.06);
   --shadow-md: 0 4px 14px rgba(24, 24, 27, 0.08), 0 2px 6px rgba(24, 24, 27, 0.06);
+
+  /* ── 상호작용 토큰 ──
+     클릭 가능한 표면(카드·글행·칩)은 전부 이 값을 쓴다.
+     여기 한 줄만 바꾸면 사이트 전체가 따라온다. 개별 하드코딩 금지. */
+  --ui-border: color-mix(in srgb, var(--text) 45%, var(--line-strong));
+  --ui-rest-shadow: var(--shadow-sm);   /* 평상시: 살짝 떠 있는 느낌 */
+  --ui-lift-y: -3px;                    /* hover 시 들리는 높이 */
+  --ui-lift-shadow: 0 14px 30px rgba(0, 0, 0, 0.16);
+  --ui-lift-border: var(--text);
+  --ui-ease: 0.16s ease;
   --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", "Malgun Gothic", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", "Consolas", "Cascadia Code", "Fira Code", "Noto Sans Mono CJK KR", "Malgun Gothic", monospace;
   --code-bg: #0f1117;
@@ -53,6 +63,7 @@ html[data-theme="dark"] {
   --nav-pill-bg: rgba(250, 250, 250, 0.08);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --ui-lift-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
   --code-bg: #121316;
   --code-head-bg: #0d0e11;
   --code-border: #2a2f37;
@@ -535,20 +546,6 @@ html[data-theme="dark"] .theme-icon-sun {
   margin: 0;
 }
 
-.home-dashboard {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-  align-items: start;
-}
-
-.home-section {
-  margin-bottom: 34px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 14px;
-}
-
 .home-list {
   margin-top: 2px;
 }
@@ -792,130 +789,8 @@ html[data-theme="dark"] .theme-icon-sun {
 }
 
 /* Home-only text card style (no thumbnail) */
-.home-dashboard .post-card {
-  padding: 12px 14px;
-  border-radius: 10px;
-  gap: 8px;
-}
-
-.home-dashboard .post-card .card-link {
-  display: block;
-  min-width: 0;
-}
-
-.home-dashboard .post-card h3 {
-  margin: 0;
-  font-size: 0.98rem;
-  line-height: 1.35;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.home-dashboard .post-card .card-excerpt {
-  display: -webkit-box;
-  margin-top: 6px;
-  color: var(--muted);
-  line-height: 1.45;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.home-dashboard .post-card .card-meta {
-  margin-top: 2px;
-  font-size: 0.82rem;
-}
 
 /* Home recent: remove outer section box and use near-square cards */
-#recent-posts.home-section {
-  border: 0;
-  border-radius: 0;
-  padding: 0;
-}
-
-#recent-posts .card-grid {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 14px;
-}
-
-#recent-posts .post-card {
-  height: 220px;
-  padding: 0;
-  border: 1px solid color-mix(in srgb, var(--line) 82%, var(--text) 18%);
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--surface) 97%, var(--text) 3%);
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease, background 0.2s ease;
-}
-
-#recent-posts .post-card .card-link {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  height: 100%;
-  padding: 12px;
-}
-
-#recent-posts .post-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.05) 0%,
-    rgba(255, 255, 255, 0.03) 45%,
-    rgba(255, 255, 255, 0.02) 100%
-  );
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
-}
-
-#recent-posts .post-card:hover,
-#recent-posts .post-card:active {
-  transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--line) 58%, var(--text) 42%);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
-  background: color-mix(in srgb, var(--surface) 95%, var(--text) 5%);
-}
-
-#recent-posts .post-card:hover::before,
-#recent-posts .post-card:active::before {
-  opacity: 1;
-}
-
-#recent-posts .post-card h3 {
-  font-size: 1.02rem;
-  line-height: 1.35;
-  letter-spacing: -0.01em;
-  margin: 0;
-  white-space: normal;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-#recent-posts .post-card .card-meta {
-  margin-top: 2px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid color-mix(in srgb, var(--line) 86%, transparent 14%);
-  font-size: 0.8rem;
-  color: color-mix(in srgb, var(--muted) 90%, var(--text) 10%);
-}
-
-#recent-posts .post-card .card-excerpt {
-  display: -webkit-box;
-  margin-top: 8px;
-  color: var(--muted);
-  line-height: 1.5;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
 
 
 .pagination {
@@ -1557,12 +1432,11 @@ html[data-theme="dark"] .theme-icon-sun {
   box-sizing: border-box;
   overflow: hidden;
   min-width: 0;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .post-neighbor-link:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+  transform: translateY(var(--ui-lift-y));
+  box-shadow: var(--ui-lift-shadow);
 }
 
 .post-neighbor-link small {
@@ -1590,6 +1464,8 @@ html[data-theme="dark"] .theme-icon-sun {
 
 .post-neighbor-link.is-empty {
   opacity: 0.65;
+  /* 링크가 아닌 자리표시자 — 들리거나 강조되면 눌러도 되는 것처럼 보인다 */
+  pointer-events: none;
 }
 
 .comments {
@@ -1979,19 +1855,13 @@ html[data-theme="dark"] .theme-icon-sun {
   border-radius: var(--radius-md);
   padding: 12px 14px;
   min-width: 0;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .home-list-link::before {
   display: none;
 }
 
-.home-list-link:hover,
-.home-list-link:active {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
-  border-color: var(--line-strong);
-}
+/* (구 정의 제거 — 상호작용 통합 블록의 --ui-* 토큰이 담당) */
 
 /* Posts / tags / search container as a panel */
 .page-section {
@@ -2020,7 +1890,6 @@ html[data-theme="dark"] .theme-icon-sun {
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   padding: 12px 14px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 #posts-list .post-card .card-link::after,
@@ -2028,12 +1897,7 @@ html[data-theme="dark"] .theme-icon-sun {
   display: none;
 }
 
-#posts-list .post-card .card-link:hover,
-#posts-list .post-card .card-link:active {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
-  border-color: var(--line-strong);
-}
+/* (구 정의 제거 — 상호작용 통합 블록의 --ui-* 토큰이 담당) */
 
 /* Search-results page cards */
 #search-page-results.card-grid {
@@ -2076,19 +1940,6 @@ html[data-theme="dark"] .theme-icon-sun {
   line-height: 1.1;
 }
 
-.projects-more {
-  margin-left: auto;
-  font-size: 0.86rem;
-  font-weight: 600;
-  color: var(--muted);
-  white-space: nowrap;
-  transition: color 0.15s ease;
-}
-
-.projects-more:hover {
-  color: var(--text);
-}
-
 /* Dedicated /projects/ page: center like other content */
 .main-content > .projects-page {
   width: 100%;
@@ -2111,11 +1962,9 @@ html[data-theme="dark"] .theme-icon-sun {
   min-width: 0;
   overflow: hidden;
   background: var(--surface);
-  border: 1px solid var(--line-strong);
   border-radius: var(--radius-lg);
   padding: 18px 20px 18px 22px;
-  box-shadow: var(--shadow-md);
-  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+  /* border / box-shadow / transition 은 상호작용 통합 블록(--ui-*)이 담당 */
 }
 
 .project-card::before {
@@ -2129,12 +1978,7 @@ html[data-theme="dark"] .theme-icon-sun {
   opacity: 0.85;
 }
 
-.project-card:hover,
-.project-card:active {
-  transform: translateY(-3px);
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.16);
-  border-color: var(--text);
-}
+/* (구 정의 제거 — 상호작용 통합 블록의 --ui-* 토큰이 담당) */
 
 .project-card-title {
   margin: 0;
@@ -2275,27 +2119,97 @@ html[data-theme="dark"] .theme-icon-sun {
   padding: 0 0 12px;
 }
 
+/* 칩과 글 목록 사이 구분선 제거 (둘은 같은 상자 안에 붙어 있다) */
 .home-list-head::after {
-  left: 0;
-  right: 0;
+  content: none;
 }
 
-/* 글 행 hover를 .project-card:hover 와 동일한 값으로 */
+/* 섹션 구분선: Projects 블록과 Posts 블록 사이 한 줄 */
+.home-list-section {
+  border-top: 1px solid var(--line);
+  margin-top: 26px;
+  padding-top: 26px;
+}
+
+/* 각 섹션의 항목들을 담는 상자. 제목(h2)은 상자 밖에 남는다. */
+.projects-grid,
+.home-feed-box {
+  background: var(--surface);
+  /* --line(#e3e4e8)은 라이트 배경(--bg #eceef1)보다 밝아 경계가 사라진다.
+     배경보다 어두운 --line-strong 을 써야 양쪽 테마에서 상자가 보인다. */
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 16px;
+}
+
+/* 프로젝트 카드: 왼쪽 4px 강조바를 없애고 테두리(둘레)로 강조를 옮긴다 */
+.project-card::before {
+  content: none;
+}
+
+.project-card {
+  /* 좌측 강조바를 없앤 자리만큼 왼쪽 패딩을 줄인다 (테두리색은 --ui-border 가 담당) */
+  padding-left: 20px;
+}
+
+/* 상자 안에서 칩과 글 목록 사이는 여백으로만 띄운다 */
+.home-feed-box .home-filter-chips {
+  margin: 0 0 14px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   상호작용 표면 통합 — 카드 / 글행(홈·/posts/) / 칩
+   값은 전부 --ui-* 토큰에서 온다. 여기 아래로는 개별 재정의 금지.
+   ══════════════════════════════════════════════════════════════ */
+
+/* 평상시: 얇은 테두리 + 옅은 그림자로 살짝 떠 있는 상태 */
+.project-card,
+.home-list-link,
+#posts-list .post-card .card-link,
+.post-neighbor-link,
+.tag-chip {
+  border: 1px solid var(--ui-border);
+  box-shadow: var(--ui-rest-shadow);
+  transition: transform var(--ui-ease), box-shadow var(--ui-ease),
+              border-color var(--ui-ease), background-color var(--ui-ease),
+              color var(--ui-ease);
+}
+
+/* hover/active: 같은 높이로 들리고 같은 그림자·테두리로 강조 */
+.project-card:hover,
+.project-card:active,
 .home-list-link:hover,
-.home-list-link:active {
-  transform: translateY(-3px);
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.16);
-  border-color: var(--text);
+.home-list-link:active,
+#posts-list .post-card .card-link:hover,
+#posts-list .post-card .card-link:active,
+.post-neighbor-link:hover,
+.post-neighbor-link:active,
+.tag-chip:hover,
+.tag-chip:active {
+  transform: translateY(var(--ui-lift-y));
+  box-shadow: var(--ui-lift-shadow);
+  border-color: var(--ui-lift-border);
+}
+
+/* 칩은 작아서 카드와 같은 높이로 들리면 과하다 — 절반만 */
+.tag-chip:hover,
+.tag-chip:active {
+  transform: translateY(calc(var(--ui-lift-y) / 2));
+  box-shadow: var(--ui-rest-shadow);
+}
+
+/* 선택된 칩은 눌린 상태다 — 들리지도, 테두리가 생기지도 않는다.
+   :hover 까지 함께 눌러야 통합 블록의 .tag-chip:hover 를 이긴다. */
+.tag-chip.active,
+.tag-chip.active:hover,
+.tag-chip.active:active {
+  transform: none;
+  box-shadow: none;
+  border-color: transparent;
 }
 
 @media (max-width: 1100px) {
-  .home-dashboard {
-    grid-template-columns: 1fr;
-  }
-
-  #recent-posts .card-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
 
   .toc-container {
     position: static;
@@ -2349,19 +2263,12 @@ html[data-theme="dark"] .theme-icon-sun {
     right: 0;
   }
 
-  #recent-posts .card-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .projects-grid {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 560px) {
-  #recent-posts .card-grid {
-    grid-template-columns: 1fr;
-  }
 
   /* Less "boxed-in-box": drop the outer section panel, let cards breathe on the canvas */
   .home-list-section,
@@ -2371,6 +2278,14 @@ html[data-theme="dark"] .theme-icon-sun {
     box-shadow: none;
     padding: 0;
     margin-bottom: 28px;
+  }
+
+  /* 위 규칙의 border:0 / padding:0 이 섹션 구분선까지 지운다.
+     Projects ↔ Posts 구분선은 모바일에서도 유지해야 하므로 되살린다. */
+  .home-list-section {
+    border-top: 1px solid var(--line);
+    padding-top: 22px;
+    margin-top: 22px;
   }
 
   .projects-section {
@@ -2402,10 +2317,6 @@ html[data-theme="dark"] .theme-icon-sun {
   .home-list-head h2,
   .projects-head h2 {
     font-size: 1.18rem;
-  }
-
-  .projects-more {
-    font-size: 0.78rem;
   }
 
   .project-card-title {
