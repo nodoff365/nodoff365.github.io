@@ -39,20 +39,19 @@ layout: default
     <section class="home-list-section">
       <header class="home-list-head">
         <h2>Posts</h2>
+        <div class="tag-chip-list home-filter-chips" role="group" aria-label="카테고리 필터">
+          <button type="button" class="tag-chip active" data-filter="">전체</button>
+          {% if manual_order and manual_order != empty %}
+            {% for name in manual_order %}
+              <button type="button" class="tag-chip" data-filter="{{ name | escape }}">{{ name }}</button>
+            {% endfor %}
+          {% else %}
+            {% for group in cat_groups %}
+              <button type="button" class="tag-chip" data-filter="{{ group.name | escape }}">{{ group.name }}</button>
+            {% endfor %}
+          {% endif %}
+        </div>
       </header>
-
-      <div class="tag-chip-list home-filter-chips" role="group" aria-label="카테고리 필터">
-        <button type="button" class="tag-chip active" data-filter="">전체</button>
-        {% if manual_order and manual_order != empty %}
-          {% for name in manual_order %}
-            <button type="button" class="tag-chip" data-filter="{{ name | escape }}">{{ name }}</button>
-          {% endfor %}
-        {% else %}
-          {% for group in cat_groups %}
-            <button type="button" class="tag-chip" data-filter="{{ group.name | escape }}">{{ group.name }}</button>
-          {% endfor %}
-        {% endif %}
-      </div>
 
       <ul class="home-list-items" id="home-feed">
         {% for post in feed_posts %}

@@ -2241,6 +2241,53 @@ html[data-theme="dark"] .theme-icon-sun {
   }
 }
 
+/* ── 홈: Projects ↔ Posts 디자인 통일 ──
+   Projects 블록을 기준으로 Posts 블록의 제목·컨테이너·hover를 맞춘다. */
+
+/* 칩: <button>은 color/font를 상속하지 않아 브라우저 기본값(검정·UI 글꼴)이
+   적용된다. 파일 상단 `a { color: inherit }` 에 대응하는 button용 보정. */
+.tag-chip {
+  color: var(--text);
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* Posts: 패널을 걷어내고 Projects처럼 페이지 평면에 직접 앉힌다 */
+.home-list-section {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  margin-bottom: 26px;
+}
+
+/* Posts 제목을 .projects-head h2 와 동일하게 */
+.home-list-head h2 {
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.home-list-head {
+  padding: 0 0 12px;
+}
+
+.home-list-head::after {
+  left: 0;
+  right: 0;
+}
+
+/* 글 행 hover를 .project-card:hover 와 동일한 값으로 */
+.home-list-link:hover,
+.home-list-link:active {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.16);
+  border-color: var(--text);
+}
+
 @media (max-width: 1100px) {
   .home-dashboard {
     grid-template-columns: 1fr;
@@ -2352,10 +2399,7 @@ html[data-theme="dark"] .theme-icon-sun {
     font-size: 0.73rem;
   }
 
-  .home-list-head h2 {
-    font-size: 1.05rem;
-  }
-
+  .home-list-head h2,
   .projects-head h2 {
     font-size: 1.18rem;
   }
@@ -2397,7 +2441,7 @@ html[data-theme="dark"] .theme-icon-sun {
 
 /* ── Home: Posts 피드 필터 칩 + 행 카테고리 라벨 ── */
 .home-filter-chips {
-  margin: 2px 0 16px;
+  margin: 12px 0 2px;
 }
 
 .home-feed-titlerow {
