@@ -27,6 +27,12 @@
   --ui-lift-shadow: 0 14px 30px rgba(0, 0, 0, 0.16);
   --ui-lift-border: var(--text);
   --ui-ease: 0.16s ease;
+
+  /* 글 목록 제목 타이포 — 홈과 /posts/ 가 같은 값을 쓴다 */
+  --list-title-size: 1.05rem;
+  --list-title-weight: 600;
+  --list-title-lh: 1.4;
+  --list-title-tracking: -0.01em;
   --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", "Malgun Gothic", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", "Consolas", "Cascadia Code", "Fira Code", "Noto Sans Mono CJK KR", "Malgun Gothic", monospace;
   --code-bg: #0f1117;
@@ -614,10 +620,10 @@ html[data-theme="dark"] .theme-icon-sun {
 .home-list-title {
   display: block;
   margin: 0 0 6px;
-  font-size: 1.05rem;
-  line-height: 1.4;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-size: var(--list-title-size);
+  line-height: var(--list-title-lh);
+  font-weight: var(--list-title-weight);
+  letter-spacing: var(--list-title-tracking);
   max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
@@ -682,8 +688,10 @@ html[data-theme="dark"] .theme-icon-sun {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  font-size: 1.02rem;
-  line-height: 1.35;
+  font-size: var(--list-title-size);
+  line-height: var(--list-title-lh);
+  font-weight: var(--list-title-weight);
+  letter-spacing: var(--list-title-tracking);
 }
 
 #posts-list .post-card .card-excerpt {

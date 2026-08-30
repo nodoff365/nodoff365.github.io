@@ -17,10 +17,12 @@ permalink: /categories/
   <p id="posts-empty" class="filter-empty" hidden>No posts found in this category filter.</p>
 
   <div class="tag-chip-list category-chip-list">
-    {% assign major_groups = site.posts | group_by_exp: "post", "post.categories[0]" | sort: "name" %}
+    {%- comment -%} Project 글은 /posts/ 계열 목록·집계에서 제외한다 {%- endcomment -%}
+    {% assign non_project = site.posts | where_exp: "post", "post.categories[0] != 'Project'" %}
+    {% assign major_groups = non_project | group_by_exp: "post", "post.categories[0]" | sort: "name" %}
     {% for major in major_groups %}
       {% if major.name and major.name != "" %}
-        <a class="tag-chip" href="{{ '/categories/' | relative_url }}?major={{ major.name | url_encode }}">
+        <a class="tag-chip" href="{{ '/categories/' | relative_url }}?major={{ major.name | remove: ' ' | downcase }}">
           <span>{{ major.name }}</span>
           <small>{{ major.items | size }}</small>
         </a>
@@ -29,7 +31,7 @@ permalink: /categories/
   </div>
 
   <div id="posts-list" class="card-grid" data-base-title="Categories">
-    {% for post in site.posts %}
+    {% for post in non_project %}
       {% include post-card.html post=post %}
     {% endfor %}
   </div>
