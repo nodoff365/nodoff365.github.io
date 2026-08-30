@@ -13,11 +13,20 @@ permalink: /tags/
 <section class="page-section">
   <h1>Tags</h1>
   <div class="tag-chip-list">
-    {% assign tags = site.tags | sort %}
+    {%- comment -%}
+      Project 글은 /posts/ 목록에 나오지 않으므로 태그 집계에서도 제외한다.
+      site.tags 를 쓰면 Project 글까지 세어 "칩엔 3인데 결과는 0" 이 된다.
+    {%- endcomment -%}
+    {% assign np = site.posts | where_exp: "p", "p.categories[0] != 'Project'" %}
+    {% assign all_tags = "" | split: "" %}
+    {% for p in np %}{% assign all_tags = all_tags | concat: p.tags %}{% endfor %}
+    {% assign tags = all_tags | uniq | sort %}
     {% for tag in tags %}
-      <a class="tag-chip" href="{{ '/posts/' | relative_url }}?tag={{ tag[0] | url_encode }}">
-        <span>{{ tag[0] }}</span>
-        <small>{{ tag[1] | size }}</small>
+      {% assign cnt = 0 %}
+      {% for p in np %}{% if p.tags contains tag %}{% assign cnt = cnt | plus: 1 %}{% endif %}{% endfor %}
+      <a class="tag-chip" href="{{ '/posts/' | relative_url }}?tag={{ tag | remove: ' ' | downcase }}">
+        <span>{{ tag }}</span>
+        <small>{{ cnt }}</small>
       </a>
     {% endfor %}
   </div>

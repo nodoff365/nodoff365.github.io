@@ -35,7 +35,7 @@
             {% if major.name and major.name != "" and major.name != "Project" %}
               <li class="tree-node major-node" data-major="{{ major.name | escape }}">
                 <div class="tree-item">
-                  <a href="{{ '/posts/' | relative_url }}?major={{ major.name | url_encode }}" class="tree-link major-link" data-major="{{ major.name | escape }}">{{ major.name }} ({{ major.items | size }})</a>
+                  <a href="{{ '/posts/' | relative_url }}?major={{ major.name | remove: ' ' | downcase }}" class="tree-link major-link" data-major="{{ major.name | escape }}">{{ major.name }} ({{ major.items | size }})</a>
                   <button class="tree-toggle icon-btn" data-target="major-{{ forloop.index }}" aria-expanded="false" aria-label="Toggle {{ major.name }}">
                     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                       <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -47,7 +47,7 @@
                   {% for minor in minor_groups %}
                     {% if minor.name and minor.name != "" %}
                       <li class="minor-group" data-major="{{ major.name | escape }}" data-minor="{{ minor.name | escape }}">
-                        <a href="{{ '/posts/' | relative_url }}?minor={{ minor.name | url_encode }}" class="minor-title-link" data-major="{{ major.name | escape }}" data-minor="{{ minor.name | escape }}">{{ minor.name }} ({{ minor.items | size }})</a>
+                        <a href="{{ '/posts/' | relative_url }}?minor={{ minor.name | remove: ' ' | downcase }}" class="minor-title-link" data-major="{{ major.name | escape }}" data-minor="{{ minor.name | escape }}">{{ minor.name }} ({{ minor.items | size }})</a>
                       </li>
                     {% endif %}
                   {% endfor %}

@@ -92,11 +92,15 @@
   const tagParam = params.get("tag");
   const onPostsPath = window.location.pathname.replace(/\/+$/, "") === "/posts";
 
+  // URL은 공백을 제거하고 소문자화한 값(예: "클라우드 기초" -> "클라우드기초")으로 온다.
+  // data-* 속성은 원본 그대로("클라우드 기초")라, 양쪽 다 공백을 지우고 소문자화해야
+  // 같은 값으로 비교된다. 하이픈은 글쓴이가 실제로 넣은 문자이므로 건드리지 않는다 —
+  // 그래야 "Rocky Linux"(공백)와 "rocky-linux"(하이픈)가 서로 다른 태그로 유지된다.
   function normalizeFilterValue(value) {
     return String(value || "")
       .normalize("NFC")
-      .trim()
-      .toLowerCase();
+      .toLowerCase()
+      .replace(/\s+/g, "");
   }
 
   // Home: Posts 피드 카테고리 칩 필터 (그 자리에서 필터, 페이지 이동 없음)
@@ -122,7 +126,7 @@
     postsNode?.classList.add("open");
 
     document.querySelectorAll(".major-node").forEach((node) => {
-      if (node.dataset.major === majorParam) {
+      if (normalizeFilterValue(node.dataset.major) === normalizeFilterValue(majorParam)) {
         node.classList.add("open");
       }
     });
@@ -130,7 +134,7 @@
 
   if (majorParam && !minorParam) {
     document.querySelectorAll(".major-link").forEach((link) => {
-      if (link.dataset.major === majorParam) {
+      if (normalizeFilterValue(link.dataset.major) === normalizeFilterValue(majorParam)) {
         link.classList.add("active");
       }
     });
@@ -141,11 +145,11 @@
     postsNode?.classList.add("open");
     document.querySelectorAll(".major-node").forEach((node) => {
       const hasMinor = Array.from(node.querySelectorAll(".minor-title-link"))
-        .some((link) => link.dataset.minor === minorParam);
+        .some((link) => normalizeFilterValue(link.dataset.minor) === normalizeFilterValue(minorParam));
       if (hasMinor) node.classList.add("open");
     });
     document.querySelectorAll(".minor-title-link").forEach((link) => {
-      if (link.dataset.minor === minorParam) {
+      if (normalizeFilterValue(link.dataset.minor) === normalizeFilterValue(minorParam)) {
         link.classList.add("active");
       }
     });
@@ -285,13 +289,34 @@
       .replaceAll("'", "&#39;");
   }
 
+  // URL 파라미터는 슬러그(클라우드-기초)라 그대로 쓰면 브레드크럼에 슬러그가 노출된다.
+  // 페이지 안의 원본 이름(data-* 속성)에서 같은 슬러그를 가진 값을 찾아 되돌린다.
+  function displayNameForSlug(slug, kind) {
+    const needle = normalizeFilterValue(slug);
+    if (!needle) return slug;
+    if (kind === "tag") {
+      for (const card of document.querySelectorAll("[data-tags]")) {
+        for (const tag of (card.dataset.tags || "").split("|")) {
+          if (tag && normalizeFilterValue(tag) === needle) return tag;
+        }
+      }
+    } else {
+      const attr = kind === "major" ? "major" : "minor";
+      for (const el of document.querySelectorAll(`[data-${attr}]`)) {
+        const raw = el.dataset[attr];
+        if (raw && normalizeFilterValue(raw) === needle) return raw;
+      }
+    }
+    return slug;
+  }
+
   function updateFilterBreadcrumb() {
     const slot = document.getElementById("breadcrumb-filter");
     if (!slot) return;
     const crumbs = [];
-    if (majorParam) crumbs.push({ label: majorParam, query: `major=${encodeURIComponent(majorParam)}` });
-    if (minorParam) crumbs.push({ label: minorParam, query: `minor=${encodeURIComponent(minorParam)}` });
-    if (tagParam) crumbs.push({ label: `#${tagParam}`, query: `tag=${encodeURIComponent(tagParam)}` });
+    if (majorParam) crumbs.push({ label: displayNameForSlug(majorParam, "major"), query: `major=${encodeURIComponent(majorParam)}` });
+    if (minorParam) crumbs.push({ label: displayNameForSlug(minorParam, "minor"), query: `minor=${encodeURIComponent(minorParam)}` });
+    if (tagParam) crumbs.push({ label: `#${displayNameForSlug(tagParam, "tag")}`, query: `tag=${encodeURIComponent(tagParam)}` });
     if (crumbs.length === 0) return;
     slot.innerHTML = crumbs
       .map((c) => `<span>&gt;</span><a href="${window.location.pathname}?${c.query}">${escapeHtml(c.label)}</a>`)
