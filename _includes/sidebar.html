@@ -30,9 +30,28 @@
           </button>
         </div>
         <ul id="posts-tree" class="tree-children">
+          {%- comment -%}
+            대분류 순서: sidebar.major_order(수동) 있으면 그 순서, 없으면
+            sidebar.major_sort(asc/desc)로 자동 정렬. 목록에 없는 대분류는
+            자동 정렬로 뒤에 이어붙여 새 카테고리가 묻히지 않게 한다.
+            Liquid 에 배열 push 가 없어 문자열 join 후 split 하는 방식으로 순서 배열을 만든다.
+          {%- endcomment -%}
           {% assign major_groups = site.posts | group_by_exp: "post", "post.categories[0]" | sort: "name" %}
-          {% for major in major_groups %}
-            {% if major.name and major.name != "" and major.name != "Project" %}
+          {% if site.sidebar.major_sort == "desc" %}{% assign major_groups = major_groups | reverse %}{% endif %}
+          {% assign major_names = major_groups | map: "name" %}
+          {% assign major_manual = site.sidebar.major_order %}
+          {% if major_manual and major_manual != empty %}
+            {% assign major_order_str = "" %}
+            {% for n in major_manual %}{% if major_names contains n %}{% assign major_order_str = major_order_str | append: n | append: "|||" %}{% endif %}{% endfor %}
+            {% for n in major_names %}{% unless major_manual contains n %}{% assign major_order_str = major_order_str | append: n | append: "|||" %}{% endunless %}{% endfor %}
+            {% assign major_order_list = major_order_str | split: "|||" %}
+          {% else %}
+            {% assign major_order_list = major_names %}
+          {% endif %}
+
+          {% for name in major_order_list %}
+            {% assign major = major_groups | where: "name", name | first %}
+            {% if major and major.name != "" and major.name != "Project" %}
               <li class="tree-node major-node" data-major="{{ major.name | escape }}">
                 <div class="tree-item">
                   <a href="{{ '/posts/' | relative_url }}?major={{ major.name | remove: ' ' | downcase }}" class="tree-link major-link" data-major="{{ major.name | escape }}">{{ major.name }} ({{ major.items | size }})</a>
@@ -44,8 +63,20 @@
                 </div>
                 <ul id="major-{{ forloop.index }}" class="tree-children minor-list">
                   {% assign minor_groups = major.items | group_by_exp: "post", "post.categories[1]" | sort: "name" %}
-                  {% for minor in minor_groups %}
-                    {% if minor.name and minor.name != "" %}
+                  {% if site.sidebar.minor_sort == "desc" %}{% assign minor_groups = minor_groups | reverse %}{% endif %}
+                  {% assign minor_names = minor_groups | map: "name" %}
+                  {% assign minor_manual = site.sidebar.minor_order %}
+                  {% if minor_manual and minor_manual != empty %}
+                    {% assign minor_order_str = "" %}
+                    {% for n in minor_manual %}{% if minor_names contains n %}{% assign minor_order_str = minor_order_str | append: n | append: "|||" %}{% endif %}{% endfor %}
+                    {% for n in minor_names %}{% unless minor_manual contains n %}{% assign minor_order_str = minor_order_str | append: n | append: "|||" %}{% endunless %}{% endfor %}
+                    {% assign minor_order_list = minor_order_str | split: "|||" %}
+                  {% else %}
+                    {% assign minor_order_list = minor_names %}
+                  {% endif %}
+                  {% for mname in minor_order_list %}
+                    {% assign minor = minor_groups | where: "name", mname | first %}
+                    {% if minor and minor.name != "" %}
                       <li class="minor-group" data-major="{{ major.name | escape }}" data-minor="{{ minor.name | escape }}">
                         <a href="{{ '/posts/' | relative_url }}?minor={{ minor.name | remove: ' ' | downcase }}" class="minor-title-link" data-major="{{ major.name | escape }}" data-minor="{{ minor.name | escape }}">{{ minor.name }} ({{ minor.items | size }})</a>
                       </li>
