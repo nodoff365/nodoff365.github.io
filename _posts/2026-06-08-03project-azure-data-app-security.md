@@ -2,7 +2,7 @@
 title: "Azure 클라우드 데이터 및 App 보안"
 date: 2026-06-08 00:00:00 +0900
 categories: [Project, Azure]
-tags: [azure, security, rbac, pim, key-vault, nsg, waf, defender-for-cloud, jit, terraform, defense-in-depth]
+tags: [Azure, security, rbac, pim, KeyVault, nsg, waf, DefenderForCloud, jit, terraform, DefenseInDepth]
 ---
 
 ## 1. 개요

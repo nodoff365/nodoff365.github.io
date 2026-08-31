@@ -24,8 +24,8 @@ layout: default
 
     <footer class="post-taxonomy">
       {% if page.categories and page.categories.size > 0 %}
-        {% assign major_encoded = page.categories[0] | url_encode %}
-        {% assign minor_encoded = page.categories[1] | url_encode %}
+        {% assign major_encoded = page.categories[0] | remove: ' ' | downcase %}
+        {% assign minor_encoded = page.categories[1] | remove: ' ' | downcase %}
         <div class="taxonomy-row">
           <strong>Categories</strong>
           <div class="taxonomy-chips">
@@ -36,10 +36,10 @@ layout: default
               {% endif %}
             {% else %}
               {% if page.categories[0] %}
-                <a class="taxonomy-chip" href="{{ '/posts/?major=' | append: major_encoded | relative_url }}">{{ page.categories[0] }}</a>
+                <a class="taxonomy-chip" href="{{ '/posts/' | relative_url }}?major={{ major_encoded }}">{{ page.categories[0] }}</a>
               {% endif %}
               {% if page.categories[1] %}
-                <a class="taxonomy-chip" href="{{ '/posts/?minor=' | append: minor_encoded | relative_url }}">{{ page.categories[1] }}</a>
+                <a class="taxonomy-chip" href="{{ '/posts/' | relative_url }}?minor={{ minor_encoded }}">{{ page.categories[1] }}</a>
               {% endif %}
             {% endif %}
           </div>
@@ -51,8 +51,8 @@ layout: default
           <strong>Tags</strong>
           <div class="taxonomy-chips">
             {% for tag in page.tags %}
-              {% assign tag_encoded = tag | url_encode %}
-              <a class="taxonomy-chip" href="{{ '/posts/?tag=' | append: tag_encoded | relative_url }}">#{{ tag }}</a>
+              {% assign tag_encoded = tag | remove: ' ' | downcase %}
+              <a class="taxonomy-chip" href="{{ '/posts/' | relative_url }}?tag={{ tag_encoded }}">#{{ tag }}</a>
             {% endfor %}
           </div>
         </div>

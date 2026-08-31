@@ -2,7 +2,7 @@
 title: "하이브리드 클라우드 보안구축"
 date: 2026-07-15 00:00:00 +0900
 categories: [Project, Infra]
-tags: [hybrid-cloud, on-premise, vlan, cisco, piolink, mysql-ha, keepalived, rsyslog, azure, terraform, ipsec-vpn]
+tags: [HybridCloud, OnPremise, vlan, cisco, piolink, MySQLHA, keepalived, rsyslog, Azure, terraform, IPsecVPN]
 ---
 
 ## 1. 개요

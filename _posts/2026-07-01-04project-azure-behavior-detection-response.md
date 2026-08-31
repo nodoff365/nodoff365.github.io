@@ -2,7 +2,7 @@
 title: "Azure 클라우드 행위기반 보안탐지 및 대응"
 date: 2026-07-01 00:00:00 +0900
 categories: [Project, Azure]
-tags: [azure, sentinel, kql, soar, logic-apps, ama, dcr, log-analytics, threat-detection]
+tags: [Azure, sentinel, kql, soar, LogicApps, ama, dcr, LogAnalytics, ThreatDetection]
 ---
 
 ## 1. 개요
