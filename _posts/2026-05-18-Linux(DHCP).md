@@ -2,7 +2,7 @@
 title: "Rocky Linux DHCP 서버 구성 및 Windows 클라이언트 테스트"
 date: 2026-05-18 00:00:00 +0900
 categories: [클라우드 기초, 인프라 실습]
-tags: [dhcp, rocky-linux, windows, apipa, network]
+tags: [dhcp, RockyLinux, windows, apipa, Network]
 ---
 ## 1. DHCP란?
 

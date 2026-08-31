@@ -2,7 +2,7 @@
 title: "VMware로 실습 환경 구성하기 (1): 실습 소개 및 NAT 네트워크 설정"
 date: 2026-05-11 00:00:00 +0900
 categories: [클라우드 기초, 인프라 실습]
-tags: [VMware, NAT, 네트워크]
+tags: [VMware, NAT, Network]
 ---
 
 ## 들어가며
