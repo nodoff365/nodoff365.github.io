@@ -381,8 +381,7 @@ a {
 }
 
 .sidebar-root,
-.tree-children,
-.post-links {
+.tree-children {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -726,16 +725,6 @@ html[data-theme="dark"] .theme-icon-sun {
 #posts-list .post-row-meta .meta-dot-2,
 #posts-list .post-row-meta .meta-dot-3 {
   display: none;
-}
-
-.home-panel {
-  margin-bottom: 0;
-  min-width: 0;
-}
-
-.section-head h1,
-.section-head h2 {
-  margin: 0 0 14px;
 }
 
 .card-grid {
@@ -1559,9 +1548,7 @@ html[data-theme="dark"] .theme-icon-sun {
   border-left-color: var(--text);
 }
 
-.page-section,
-.category-group,
-.tag-group {
+.page-section {
   margin-bottom: 22px;
 }
 
