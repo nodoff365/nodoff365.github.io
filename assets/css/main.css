@@ -16,7 +16,7 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
-  --nav-pill-bg: rgba(24, 24, 27, 0.07);
+  --nav-pill-bg: rgba(24, 24, 27, 0.16);
   /* 라이트 모드에서 그림자가 잘 안 보이던 문제 — 투명도를 살짝 올림 */
   --shadow-sm: 0 1px 3px rgba(24, 24, 27, 0.09), 0 2px 5px rgba(24, 24, 27, 0.07);
   --shadow-md: 0 4px 14px rgba(24, 24, 27, 0.11), 0 2px 6px rgba(24, 24, 27, 0.08);
@@ -39,22 +39,24 @@
   --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", "Malgun Gothic", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", "Consolas", "Cascadia Code", "Fira Code", "Noto Sans Mono CJK KR", "Malgun Gothic", monospace;
   /* 코드블록: 카드/상자에서 이미 검증된 톤을 그대로 재사용 (새로 만들지 않음) */
-  --code-bg: #e4e6e8;
-  --code-head-bg: #dcdee0;
-  --code-border: #adafb4;
+  --code-bg: #eef0f2;
+  --code-head-bg: #e2e4e6;
+  --code-border: #9ea2a6;
   --code-fg: #18181b;
   --code-icon: #4e4e58;
   --code-inline-bg: #e4e6e8;
   --code-inline-fg: #18181b;
   --code-inline-border: #adafb4;
-  --tok-comment: #62666d;
-  --tok-keyword: #b3261e;
-  --tok-string: #126ba0;
-  --tok-number: #0161d2;
+  /* GitHub Light 공식 문법 강조색(primer/github-syntax-light) 이식,
+     대비 미달 3종(comment/keyword/type)만 WCAG 4.5 맞춰 조정 */
+  --tok-comment: #5d6670;
+  --tok-keyword: #c22534;
+  --tok-string: #032f62;
+  --tok-number: #005cc5;
   --tok-func: #6f42c1;
-  --tok-type: #116329;
-  --tok-operator: #b3261e;
-  --tok-error: #c81b27;
+  --tok-type: #117529;
+  --tok-operator: #18181b;
+  --tok-error: #b31d28;
 }
 
 [hidden] {
@@ -74,22 +76,24 @@ html[data-theme="dark"] {
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
   --ui-lift-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
-  --code-bg: #121316;
-  --code-head-bg: #0d0e11;
-  --code-border: #2a2f37;
+  --code-bg: #232527;
+  --code-head-bg: #1a1c1e;
+  --code-border: #4a4d51;
   --code-fg: #e6edf3;
   --code-icon: #9aa4b2;
   --code-inline-bg: #1c1d22;
   --code-inline-fg: #e6edf3;
   --code-inline-border: #2a2f37;
-  --tok-comment: #8b949e;
-  --tok-keyword: #ff7b72;
-  --tok-string: #a5d6ff;
-  --tok-number: #79c0ff;
-  --tok-func: #d2a8ff;
-  --tok-type: #7ee787;
-  --tok-operator: #ff7b72;
-  --tok-error: #f85149;
+  /* GitHub Dark 공식 문법 강조색(primer/github-syntax-dark) 이식,
+     error만 WCAG 4.5 맞춰 조정 */
+  --tok-comment: #959da5;
+  --tok-keyword: #f45464;
+  --tok-string: #79b8ff;
+  --tok-number: #c8e1ff;
+  --tok-func: #b392f0;
+  --tok-type: #7bcc72;
+  --tok-operator: #f4f4f5;
+  --tok-error: #f35665;
 }
 
 * {
