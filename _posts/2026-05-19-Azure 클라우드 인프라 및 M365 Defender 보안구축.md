@@ -1,7 +1,7 @@
 ---
 title: "Azure 클라우드 인프라 및 M365 Defender 보안구축"
 date: 2026-05-19 00:00:00 +0900
-categories: [Project, Azure]
+categories: [Project]
 tags: [Azure, terraform, HubSpoke, IPsecVPN, DisasterRecovery, waf, redis, IaC]
 ---
 
