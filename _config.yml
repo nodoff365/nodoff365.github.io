@@ -7,6 +7,8 @@ timezone: Asia/Seoul   # 시간대 (글 날짜 표시 기준)
 paginate: 5            # 글 목록(/posts) 한 페이지에 보여줄 글 수
 paginate_path: "/page:num/"          # (시스템) 페이지네이션 URL 형식
 permalink: /:categories/:title/      # (시스템) 글 주소 형식
+exclude:               # (시스템) 사이트에 복사하지 않을 파일 — 건드리지 마세요.
+  - CLAUDE.md
 
 kramdown:              # (시스템) 마크다운 세부 설정 — 건드리지 마세요.
   input: GFM
