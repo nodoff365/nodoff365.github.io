@@ -5,16 +5,17 @@ categories: [클라우드 기초, 인프라 실습]
 tags: [VMware, NAT, Network]
 ---
 
-## 들어가며
+### 1. 개요
 
-서버 관리나 네트워크 서비스를 공부할 때 가장 먼저 부딪히는 문제는 **실습 환경**이다.
-물리 서버를 여러 대 구비하기 어렵기 때문에, 보통 VMware Workstation Pro 같은 가상화 소프트웨어를 활용해 한 대의 PC에서 여러 서버를 동시에 운영한다.
+> 서버 관리나 네트워크 서비스를 공부할 때 가장 먼저 부딪히는 문제는 실습 환경이다. <br>물리 서버를 여러 대 구비하기 어렵기 때문에, VMware Workstation Pro로 한 대의 PC에서 여러 서버를 동시에 운영한다. <br>이번 시리즈에서는 아래 구성도를 기반으로 가상머신을 만들고, 이후 DHCP·DNS·웹 서버·FTP·메일 등 주요 서비스를 하나씩 구축해나간다.
 
-이번 시리즈에서는 아래 구성도를 기반으로 가상머신을 직접 만들고, 이후 포스트에서 DHCP, DNS, 웹 서버, FTP, 메일 등 실무에서 쓰이는 주요 서비스들을 하나씩 구축해나갈 예정이다.
+<br>
 
 ---
 
-## 실습 구성도
+<br>
+
+### 2. 실습 구성도
 
 Rocky Linux + Windows 10/11
 
@@ -36,13 +37,15 @@ Windows Server + Windows 10/11
 | dns | 168.126.63.1, 8.8.8.8 | 168.126.63.1, 8.8.8.8 | 168.126.63.1, 8.8.8.8 | 168.126.63.1, 8.8.8.8 | 168.126.63.1, 8.8.8.8 |
 | roles | DHCP, 주DNS, WEB(Main), WEB(Blog) | FTP, 보조DNS, WEB(Main), WEB(Blog), WEB(Intra) | MAIL, 보조DNS, WEB(Main), WEB(Intra) | IP별 접근제한, 사용자별 접근제한 | |
 
-모든 VM은 VMware의 NAT 네트워크(VMnet8)를 사용하며, 대역은 `10.0.0.0/24`, 게이트웨이는 `10.0.0.254`로 통일한다.
+모든 VM은 VMware NAT 네트워크(VMnet8)를 사용하며, 대역은 `10.0.0.0/24`, 게이트웨이는 `10.0.0.254`로 통일한다.
+
+<br>
 
 ---
 
-## 시리즈 구성
+<br>
 
-실습 환경 구성
+### 3. 시리즈 구성
 
 | 편 | 내용 |
 |---|---|
@@ -52,32 +55,48 @@ Windows Server + Windows 10/11
 | 4편 | Windows 11 설치 |
 | 5편 | Windows Server 2022 설치 |
 
+<br>
+
 ---
 
-## 1. NAT 네트워크 설정
+<br>
 
-VM을 생성하기 전에 VMware의 NAT 네트워크를 먼저 구성한다.
+### 4. NAT 네트워크 설정
+
+> VM을 생성하기 전에 NAT 네트워크를 먼저 구성한다. <br>VMnet8을 NAT로 설정하고 서브넷·게이트웨이를 직접 지정해야, 이후 각 VM에 부여할 고정 IP 대역이 명확해진다.
+
+<br>
+
+#### 4.1 Virtual Network Editor 설정
 
 VMware 상단 메뉴에서 **Edit → Virtual Network Editor...** 를 클릭한다.
-![](/assets/images/VMware/NAT/1.png){: style="width:40%;" }<br>
 
-VMnet8을 선택하고 NAT 유형으로 설정한다. Subnet IP는 `10.0.0.0`, Subnet mask는 `255.255.255.0`으로 입력한 뒤, **NAT Settings** 버튼을 클릭해 Gateway IP를 `10.0.0.254`로 설정한다. DHCP는 체크 해제한다.
+![](/assets/images/VMware/NAT/1.png){: style="width:40%;" }
+<br>
 
-> VM마다 고정 IP를 직접 부여할 것이기 때문에 DHCP는 비활성화한다.
+VMnet8을 선택하고 NAT 유형으로 설정한다. Subnet IP는 `10.0.0.0`, Subnet mask는 `255.255.255.0`으로 입력한 뒤, **NAT Settings** 버튼을 클릭해 Gateway IP를 `10.0.0.254`로 설정하고 DHCP는 체크 해제한다.
 
-![](/assets/images/VMware/NAT/2.png){: style="width:90%;" }<br>
+![](/assets/images/VMware/NAT/2.png){: style="width:90%;" }
+
+<br>
+
+#### 4.2 호스트 어댑터 IP 설정
 
 제어판 → 네트워크 연결에서 **VMware Network Adapter VMnet8**을 우클릭 → 속성을 선택한다.
-![](/assets/images/VMware/NAT/3.png){: style="width:65%;" }<br>
 
-**인터넷 프로토콜 버전 4(TCP/IPv4)** 를 선택하고 속성을 클릭한 뒤, 호스트 어댑터의 IP를 아래와 같이 고정으로 입력한다.
+![](/assets/images/VMware/NAT/3.png){: style="width:65%;" }
+<br>
+
+**인터넷 프로토콜 버전 4(TCP/IPv4)** 를 선택하고 속성을 클릭한 뒤, 아래와 같이 입력한다.
 
 - IP: `10.0.0.253`
 - 서브넷 마스크: `255.255.255.0`
 - 게이트웨이: 비워둠
 
-![](/assets/images/VMware/NAT/4.png){: style="width:90%;" }<br>
+![](/assets/images/VMware/NAT/4.png){: style="width:90%;" }
 
-> 호스트 PC가 VM들과 같은 네트워크 대역에 있어야 통신이 가능하다. 게이트웨이는 VMware가 자체적으로 처리하므로 입력하지 않는다.
+<br>
+
+---
 
 여기까지 완료하면 VMware NAT 네트워크 구성이 끝난다. 다음 포스트에서는 Rocky Linux 9 가상머신을 생성하고 OS를 설치한다.
