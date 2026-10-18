@@ -1,12 +1,12 @@
 ---
 title: "Rocky Linux DHCP 서버 구성 및 Windows 클라이언트 테스트"
-date: 2026-05-18 00:00:00 +0900
+date: 2026-05-27 00:00:00 +0900
 categories: [클라우드 기초, 인프라 실습]
 tags: [DHCP, RockyLinux, Windows, APIPA, Network]
 ---
 ### 1. 개요
 
-> 이전 글에서 구성한 Rocky Linux 서버에 DHCP 서버를 올리고, Windows 10/11 클라이언트가 IP를 자동으로 받는지 확인한다. <br>DHCP의 동작 원리(DORA)를 먼저 정리하고, 서버 구성, 클라이언트 테스트, APIPA 확인, MAC 주소 기반 IP 예약 순서로 진행한다.
+> VMware 시리즈에서 만든 실습 환경([2편 Rocky Linux 9](/클라우드기초/인프라실습/vmware_02_rocky9/), [3편 Windows 10](/클라우드기초/인프라실습/vmware_03_win10/), [4편 Windows 11](/클라우드기초/인프라실습/vmware_04_win11/))을 그대로 사용한다. <br>rocky9-1에 DHCP 서버를 올리고, Windows 10/11 클라이언트가 IP를 자동으로 받는지 확인한다. <br>DHCP의 동작 원리(DORA)를 먼저 정리하고, 서버 구성, 클라이언트 테스트, APIPA 확인, MAC 주소 기반 IP 예약 순서로 진행한다.
 
 <br>
 
@@ -50,7 +50,7 @@ DHCP(Dynamic Host Configuration Protocol)는 네트워크에 연결된 클라이
 | 항목 | 값 |
 |------|-----|
 | 네트워크 대역 | 10.0.0.0/24 |
-| DHCP 서버 (Rocky Linux 1) | 10.0.0.11 |
+| DHCP 서버 (rocky9-1) | 10.0.0.11 |
 | Gateway | 10.0.0.254 |
 | DHCP 할당 범위 | 10.0.0.31 ~ 10.0.0.250 |
 | 서버 고정 IP 대역 (제외) | 10.0.0.1 ~ 10.0.0.30, 10.0.0.251 ~ 10.0.0.254 |
@@ -290,7 +290,9 @@ Win10/11에서 `ipconfig /release` 후 `ipconfig /renew`를 실행한다.
 <br>
 ### 8. 정리 및 초기화
 
-> 실습이 끝나면 다음 글의 구성에 영향을 주지 않도록 DHCP 서비스를 멈추고 설치한 서버와 설정을 지운다.
+> 실습이 끝나면 다음 글의 구성에 영향을 주지 않도록 DHCP 서버를 지우고, 실습 중 바꾼 클라이언트 설정도 원래대로 되돌린다.
+
+#### 8.1 DHCP 서버 정리
 
 DHCP 서비스 중지
 
@@ -306,6 +308,27 @@ rm -rf /etc/dhcp/ /var/lib/dhcpd
 ```
 
 - `autoremove`는 dhcp-server와 함께 설치됐지만 더 이상 필요하지 않은 의존성 패키지도 함께 제거한다.
+
+<br>
+#### 8.2 Windows 클라이언트 복구
+
+> VMware 시리즈에서 Windows 10/11은 고정 IP(`10.0.0.101`, `10.0.0.201`)로 구성했으므로, 실습 중 바꾼 자동 IP 설정과 MAC 주소를 원래대로 되돌려야 이후 글의 환경과 맞는다.
+
+**IP 설정을 고정 IP로 되돌리기**
+
+`실행(Win+R) → ncpa.cpl → Ethernet0 우클릭 → 속성 → 인터넷 프로토콜 버전 4(TCP/IPv4) → 다음 IP 주소 사용`
+
+- Windows 10: IP `10.0.0.101`
+- Windows 11: IP `10.0.0.201`
+- 서브넷 마스크: `255.255.255.0`
+- 기본 게이트웨이: `10.0.0.254`
+- DNS: `168.126.63.1`, `8.8.8.8`
+
+**MAC 주소 원복**
+
+`실행(Win+R) → ncpa.cpl → Ethernet0 우클릭 → 속성 → 구성 → 고급 → Locally Administered Address → 사용 안 함(또는 값 삭제) → 확인`
+
+- `ipconfig /all`의 `물리적 주소`가 원래 MAC 주소로 돌아왔는지 확인한다.
 
 ---
 
