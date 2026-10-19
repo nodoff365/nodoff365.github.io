@@ -150,5 +150,5 @@ vi 파일명
 
 ## 그 외 하우스 룰
 - 발행된 글 내용을 먼저 변경하기 전 항상 사용자 확인을 받는다.
-- 커밋 작성자는 항상 `nodoff <nodoff365@gmail.com>`로 한다. 세션이 시작될 때와 컨테이너가 바뀐 뒤에는 첫 커밋 전에 `git config user.name`, `git config user.email`을 확인하고 이 값이 아니면 저장소 로컬 설정으로 맞춘다. 기본값 `Claude <noreply@anthropic.com>`로 작성자를 두지 않는다. 단 **커미터는 `Claude <noreply@anthropic.com>`로 둔다**(세션 훅이 커미터 이메일을 확인한다). 커밋할 때는 `GIT_COMMITTER_NAME="Claude" GIT_COMMITTER_EMAIL="noreply@anthropic.com" git commit ...`처럼 커미터 환경 변수를 지정한다.
+- 커밋 작성자와 커미터는 모두 `nodoff <nodoff365@gmail.com>`로 한다. 세션이 시작될 때와 컨테이너가 바뀐 뒤에는 첫 커밋 전에 `git config user.name`, `git config user.email`을 확인하고 이 값이 아니면 저장소 로컬 설정으로 맞춘다. 기본값 `Claude <noreply@anthropic.com>`로 커밋하지 않는다. 세션 훅이 커미터가 `noreply@anthropic.com`이 아니라며 Unverified 경고를 띄워도 사용자 허락에 따라 무시하고 이 설정을 유지한다. 훅의 안내대로 `Claude`로 바꾸거나 `--reset-author`를 하지 않는다.
 - 작업 브랜치나 PR은 만들지 않고 `main`에 직접 push한다. 단, push 전에 항상 사용자에게 먼저 허락을 받는다.
